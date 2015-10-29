@@ -1,0 +1,497 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>随手记录编程的那些坑（二）:Android应用编程中的小坑 | lzy&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="刘智勇">
+    
+    <meta name="description" content="本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="lzyickobe" />
+    <meta name="twitter:title" content="随手记录编程的那些坑（二）:Android应用编程中的小坑 | lzy&#39;s blog" />
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<!--
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="lzy&#39;s blog" title="lzy&#39;s blog"/></a>
+			</div>
+			-->
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="lzy&#39;s blog">lzy&#39;s blog</a></h1>
+				<h2 class="blog-motto">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/messages">留言板</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+					
+					</li>
+
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2014/10/21/╦ц╩╓╝╟┬╝▒р│╠╡──╟╨й┐╙ги╢■гй/" title="随手记录编程的那些坑（二）:Android应用编程中的小坑" itemprop="url">随手记录编程的那些坑（二）:Android应用编程中的小坑</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://lzyickobe.github.io/about" title="刘智勇" target="_blank" itemprop="author">刘智勇</a>
+		
+  <p class="article-time">
+    <time datetime="2014-10-21T04:07:17.000Z" itemprop="datePublished"> 发表于 Oct 21 2014</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#重叠控件的事件响应"><span class="toc-number">1.</span> <span class="toc-text">重叠控件的事件响应</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java时间戳和unix时间戳"><span class="toc-number">2.</span> <span class="toc-text">Java时间戳和unix时间戳</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MediaPlayer的create()和prepare()"><span class="toc-number">3.</span> <span class="toc-text">MediaPlayer的create()和prepare()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#listview复用item注意事项"><span class="toc-number">4.</span> <span class="toc-text">listview复用item注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android在代码中动态设置字体颜色"><span class="toc-number">5.</span> <span class="toc-text">Android在代码中动态设置字体颜色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android动画位移后控件的位置变化"><span class="toc-number">6.</span> <span class="toc-text">Android动画位移后控件的位置变化</span></a></li></ol>
+		
+		</div>
+		
+		<p>本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化<br><a id="more"></a></p>
+<h2 id="重叠控件的事件响应"><strong>重叠控件的事件响应</strong></h2><p>在FrameLayout或Relativelayout中有两个view，这两个view重叠堆放，view1在上，view2在下。view1是有几个button的LinearLayout，view2是一个listview。点击事件的处理有以下几种情况：</p>
+<ol>
+<li><p>如果只给view1的button设置了点击事件，底下view2的listview和view1的button相交区域是接收不到点击事件的，在非相交区域view2的list控件是可以接收到点击事件的。 原因是在view1的button和view2的listview相交区域的点击事件会首先传到上层的view1，view1的button把点击事件消费了，就不会继续传给底下的view2了。</p>
+</li>
+<li><p>如果在view1和view1的button都设置了点击事件，view1的button会接收到touch事件，而view2的任何区域都将接收不到点击事件。原因是touch事件是这样传递的，从父容器到view1，view1再传给view1的button。由于view1设置了点击事件，等于view1拦截了touch事件，就不会在传给view2了。如果点击的区域在button上，则会响应button的点击事件，不会响应view1的点击事件；如果不在button上，才会被view1的点击事件处理。</p>
+</li>
+<li><p>view1和view2的父容器，也就是FrameLayout、Relativelayout，这两个是ViewGroup的子类。他们有onInterceptTouchEvent()这个方法可以拦截Touch事件，一旦他们复写了onInterceptTouchEvent()，并return true。点击事件就不会再传给view1和view2了。</p>
+</li>
+</ol>
+<p>这里写的自己都比较晕，Android事件传递机制必须理解的全面，如果是片面的理解，在项目中很可能就不懂为什么会这样。我推荐两篇事件传递的博文：<a href="http://blog.csdn.net/morgan_xww/article/details/9372285" target="_blank" rel="external">小威的专栏</a>和<a href="http://blog.csdn.net/hyp712/article/details/8777835" target="_blank" rel="external">hyp712的专栏</a>。Touch事件传递机制真的很重要，有空的话，我自己也会写一篇TouchEvent的专题。</p>
+<h2 id="Java时间戳和unix时间戳"><strong>Java时间戳和unix时间戳</strong></h2><p>一句话解释： Java时间戳是long型的，精确到毫秒；unix时间戳是int型，精确到秒；unix转换成java时间戳的时候需要 * 1000。</p>
+<h2 id="MediaPlayer的create()和prepare()"><strong>MediaPlayer的create()和prepare()</strong></h2><p>使用MediaPlayer的时候很容易出现一个错误：prepareAsync called in state 8. 一般出现这种问题很可能是同时调用了create()和prepare()方法，删除调用prepare()的代码就可以解决。原因是Android在create()方法里面调用过mp.prepare()方法，你手动再次调用就会发生异常。</p>
+<h2 id="listview复用item注意事项"><strong>listview复用item注意事项</strong></h2><ol>
+<li><p>在listview的getView()方法中，如果给item中的某一个控件赋值需要用if条件判断的话，记得必须把else写全。因为listview会复用item，复用的item会把上一个状态保存下来，如果不把else写全，当前的item就不会被重新赋值了。</p>
+</li>
+<li><p>在getView()中，使用getTag和setTag可以优化一些性能，比如说给imageview设置tag，会把imageview缓存起来，方便多次重用，也可以通知getTag()知道当前的imageview属于哪一个item。</p>
+</li>
+</ol>
+<h2 id="Android在代码中动态设置字体颜色"><strong>Android在代码中动态设置字体颜色</strong></h2><ul>
+<li><p>取xml中的颜色来设置字体颜色像下面这样写，颜色设置是无效的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(R.color.textColor_black);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>xml的颜色必须通过Color类来操作，从Resources中获取</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(this.getResources().getColor(R.color.textColor_black));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果需要设置color的focused、pressed、selected等状态。<br>先定义一个xml文件，color文件夹下创建一个textColor_red2white.xml</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34;?&#62;&#10;&#60;selector xmlns:android=&#34;http://schemas.android.com/apk/res/android&#34;&#62;&#10;    &#60;item android:state_pressed=&#34;true&#34; android:color=&#34;@color/white&#34;/&#62;&#10;    &#60;item android:state_pressed=&#34;false&#34; android:color=&#34;@color/red&#34;/&#62;&#10; &#8230;&#10;&#60;/selector&#62;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后从Resources中获取ColorStateList才能设置成功</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(this.getResources().getColorStateList(R.color. textColor_red2white));</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Android动画位移后控件的位置变化"><strong>Android动画位移后控件的位置变化</strong></h2><ul>
+<li><strong>问题描述</strong></li>
+</ul>
+<p>初始位置是 0,你要运动到 300，那么你可以new TranslateAnimation(0, 300, 0, 0);来获得位移动画,但是移动后,它会闪回0位置,因为控件实际坐标还是0 (你可以用getX()来测试一下)。</p>
+<ul>
+<li><strong>原因分析</strong></li>
+</ul>
+<p>Android动画的API设计就是这样的，动画移动并不会移动真正的控件的位置，控件的位置还在原来的地方。</p>
+<ul>
+<li><strong>解决方法</strong></li>
+</ul>
+<p>先移位,再做位置变换。先把控件隐藏，把位置设置在300，然后显示。这时候你用new TranslateAnimation(0, 300, 0, 0),就会从300移动到600再弹回来,这效果肯定不行。只需要做个反向offset,new TranslateAnimation(-300, 0, 0, 0),那么就从0,运动到300，最后停留在300这个位置了。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/编程-踩过的那些坑/">编程-踩过的那些坑</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/坑/">坑</a>
+  </div>
+
+</div>
+
+
+<div class="article-share" id="share">
+
+<div class="share-jiathis">
+  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+     ralateuid:{"tsina":"1792237047"},hideMore:false}
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+1393984285215619" charset="utf-8"></script>      
+
+ </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2014/10/30/Square┐к╘┤┐тOkHttp╡─╖╓╬Ў║═╩╣╙├ги╥╗гй/" title="Square开源库OkHttp的分析和使用（一）">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Square开源库OkHttp的分析和使用（一）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/10/16/╦ц╩╓╝╟┬╝▒р│╠╡──╟╨й┐╙ги╥╗гй/"  title="随手记录编程的那些坑（一）:Java对象问题">
+ <strong>下一篇：</strong><br/> 
+ <span>随手记录编程的那些坑（一）:Java对象问题
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#重叠控件的事件响应"><span class="toc-number">1.</span> <span class="toc-text">重叠控件的事件响应</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java时间戳和unix时间戳"><span class="toc-number">2.</span> <span class="toc-text">Java时间戳和unix时间戳</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MediaPlayer的create()和prepare()"><span class="toc-number">3.</span> <span class="toc-text">MediaPlayer的create()和prepare()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#listview复用item注意事项"><span class="toc-number">4.</span> <span class="toc-text">listview复用item注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android在代码中动态设置字体颜色"><span class="toc-number">5.</span> <span class="toc-text">Android在代码中动态设置字体颜色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android动画位移后控件的位置变化"><span class="toc-number">6.</span> <span class="toc-text">Android动画位移后控件的位置变化</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<section class="author-info">
+		
+			<p> Hello ,I&#39;m Liuzhiyong.</p>
+		
+		
+			<p>	This is my blog in github page.</p>
+		
+	</section>
+	 
+</div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Android开源库-网络/" title="Android开源库-网络">Android开源库-网络<sup>9</sup></a></li>
+		
+			<li><a href="/categories/Android性能优化/" title="Android性能优化">Android性能优化<sup>2</sup></a></li>
+		
+			<li><a href="/categories/Android高级编程之路/" title="Android高级编程之路">Android高级编程之路<sup>2</sup></a></li>
+		
+			<li><a href="/categories/编程-踩过的那些坑/" title="编程-踩过的那些坑">编程-踩过的那些坑<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://defshine.github.io/archives.html" target="_blank" title="defshine">defshine's Blog</a></li>
+      <li><a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea's Blog</a></li>
+      <li><a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家's Blog</a></li>
+      <li><a href="http://stormzhang.github.io/" target="_blank" title="storm">Storm's Blog</a></li>
+      <li><a href="http://hymanwang.github.io/" target="_blank" title="Hyman">Hyman's Blog</a></li>
+      <li><a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖CSDN">郭霖's Blog</a></li>
+      <li><a href="http://blog.csdn.net/xyz_lmn/" target="_blank" title="张兴业CSDN">张兴业's Blog</a></li>
+      <li><a href="http://hukai.me/" target="_blank" title="hukai">胡凯's Blog</a></li>
+      <li><a href="http://wuchong.me" target="_blank" title="WuChong">Jark's Blog</a></li>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+    </ul>
+</div>
+
+  
+  <div class="widget-wrap">
+  <p class="asidetitle">最近发表</p>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/01/20/AndroidAntPackage/">Android多渠道打包工具(完美支持中文属性)</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1792237047&verifier=28da7c8b&dpc=1"></iframe>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	<!--
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Liuzhiyong. <br/>
+			This is my blog in github page.</p>
+	</section>
+	 
+	-->
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1792237047" target="_blank" class="icon-weibo" title="weibo"></a>
+		
+		
+		<a href="https://github.com/lzyickobe" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/4127783" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/lzyickobe" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/lzyickobe" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		
+		
+		<a href="mailto:lzyickobe@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2015 
+		
+		<a href="http://lzyickobe.github.io/about" target="_blank" title="刘智勇">刘智勇</a>
+		
+		</p>
+		<p>
+		<a href="https://www.upyun.com/" target="_blank"><img src="http://upfiles.b0.upaiyun.com/logo/120x60.png" alt="UPYUN"></a>
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"lzyblog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-55079140-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<script src="/js/totop.js"></script>
+
+
+
+
+  </body>
+</html>
