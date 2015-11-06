@@ -1,0 +1,503 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android IPC - Binder 学习总结 | lzy&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="刘智勇">
+    
+    <meta name="description" content="最近想学些Android Framework中的东西，必经之路就是binder，不夸张的说，binder是整个android架构 的基础。本文从Binder的基本概念和框架入手，讲述binder机制的点点滴滴。全文分为以下四部分：1、Android为何设计binder进行进程间通信。2、Binder的框架结构和概述。3、Client和Server通信过程。4、binder总结。
+PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总结，而且本文只是binder的入门，不涉及到过多底层的描述，要想更多了解binder的内容，还请移步到引用文献中老罗和邓凡平老师的文章。">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="lzyickobe" />
+    <meta name="twitter:title" content="Android IPC - Binder 学习总结 | lzy&#39;s blog" />
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<!--
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="lzy&#39;s blog" title="lzy&#39;s blog"/></a>
+			</div>
+			-->
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="lzy&#39;s blog">lzy&#39;s blog</a></h1>
+				<h2 class="blog-motto">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/messages">留言板</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+					
+					</li>
+
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/06/AndroidBinder/" title="Android IPC - Binder 学习总结" itemprop="url">Android IPC - Binder 学习总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://lzyickobe.github.io/about" title="刘智勇" target="_blank" itemprop="author">刘智勇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-06T08:33:17.000Z" itemprop="datePublished"> 发表于 Nov 6 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android_IPC_为何设计Binder"><span class="toc-number">1.</span> <span class="toc-text">Android IPC 为何设计Binder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Binder总体概述"><span class="toc-number">2.</span> <span class="toc-text">Binder总体概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Binder框架及概述"><span class="toc-number">2.0.1.</span> <span class="toc-text">Binder框架及概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四大角色"><span class="toc-number">2.0.2.</span> <span class="toc-text">四大角色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通讯模型"><span class="toc-number">2.0.3.</span> <span class="toc-text">通讯模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四大角色的分工"><span class="toc-number">2.0.4.</span> <span class="toc-text">四大角色的分工</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Client和Server的通讯过程"><span class="toc-number">3.</span> <span class="toc-text">Client和Server的通讯过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#前戏"><span class="toc-number">3.0.1.</span> <span class="toc-text">前戏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Server初始化（MediaService为例）"><span class="toc-number">3.0.2.</span> <span class="toc-text">Server初始化（MediaService为例）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MediaService通信"><span class="toc-number">3.0.3.</span> <span class="toc-text">MediaService通信</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Binder总结"><span class="toc-number">4.</span> <span class="toc-text">Binder总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用资料"><span class="toc-number">5.</span> <span class="toc-text">引用资料</span></a></li></ol>
+		
+		</div>
+		
+		<p>最近想学些Android Framework中的东西，必经之路就是binder，不夸张的说，binder是整个android架构 的基础。本文从Binder的基本概念和框架入手，讲述binder机制的点点滴滴。全文分为以下四部分：1、Android为何设计binder进行进程间通信。2、Binder的框架结构和概述。3、Client和Server通信过程。4、binder总结。</p>
+<p>PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总结，而且本文只是binder的入门，不涉及到过多底层的描述，要想更多了解binder的内容，还请移步到引用文献中老罗和邓凡平老师的文章。<br><a id="more"></a></p>
+<h2 id="Android_IPC_为何设计Binder"><strong>Android IPC 为何设计Binder</strong></h2><p>Android 系统中，为了向应用开发者提供丰富多样的功能，这种通信方式更是无处不在，诸如媒体播放，音频视频捕获，通知，到各种让手机更智能的传感器（加速度，方位，温度，光亮度等）都由不同的Server负责管理，应用程序只需做为Client与这些Server建立连接便可以使用这些服务，花很少的时间和精力就能开发出令人眩目的功能。</p>
+<p>设计Binder的原因主要有以下3个：</p>
+<ul>
+<li><strong>Linux支持CS通信模式的IPC少</strong> 目前linux支持的IPC包括传统的管道，System V IPC，即消息队列/共享内存/信号量，以及socket，其中只有socket支持Client-Server的通信方式。当然也可以在这些底层机制上架设一套协议来实现Client-Server通信，但这样增加了系统的复杂性，在嵌入式这种条件复杂，资源稀缺的系统中可靠性也难以保证。</li>
+<li><strong>传输性能低</strong> socket作为一款通用接口，其传输效率低，开销大，主要用在跨网络的进程间通信和本机上进程间的低速通信。消息队列和管道采用存储-转发方式，即数据先从发送方缓存区拷贝到内核开辟的缓存区中，然后再从内核缓存区拷贝到接收方缓存区，至少有两次拷贝过程。共享内存虽然无需拷贝，但控制复杂，难以使用。</li>
+<li><strong>安全性不高</strong> Android作为一个开放式，拥有众多开发者的的平台，应用程序的来源广泛，确保智能终端的安全是非常重要的。终端用户不希望从网上下载的程序在不知情的情况下偷窥隐私数据，连接无线网络，长期操作底层设备导致电池很快耗尽等等。传统IPC没有任何安全措施，完全依赖上层协议来确保。首先传统IPC的接收方无法获得对方进程可靠的UID/PID（用户ID/进程ID），从而无法鉴别对方身份。</li>
+</ul>
+<h2 id="Binder总体概述"><strong>Binder总体概述</strong></h2><h4 id="Binder框架及概述"><strong>Binder框架及概述</strong></h4><ul>
+<li>Binder是Android中进程间通信最常见的方式，采用Client-Server的通信模型。</li>
+<li>Client和Server之间的通信通过Binder驱动间接实现。</li>
+<li>Service Manager是一个守护进程，用来管理Server，并向Client提供查询Server接口的能力。<br><img src="http://lzyblog.b0.upaiyun.com/binder/binderframe.png" alt="binder框架"></li>
+</ul>
+<h4 id="四大角色"><strong>四大角色</strong></h4><ul>
+<li><strong>Binder Driver</strong>：Binder驱动，跑在内核空间，由framework实现。</li>
+<li><strong>Service Manager</strong>：Services管理员，跑在用户空间，由framework实现。</li>
+<li><strong>Server</strong>: 服务端，跑在用户空间，framework实现了很多系统级的server，也可以在application中实现自己的server。</li>
+<li><strong>Client</strong>：客户端，跑在用户空间，一般在application中实现。</li>
+</ul>
+<h4 id="通讯模型"><strong>通讯模型</strong></h4><p><strong>这四个角色的关系和互联网类似：Server是服务器，Client是客户终端，ServiceManager是域名服务器（DNS），Binder驱动是路由器。</strong></p>
+<p>(１)客户端通过某种方式得到服务器端的代理对象。代理对象和他的本地对象没有什么差别，它可以像其他本地对象一样调用其方法，访问其变量。<br>(２)客户端通过调用代理对象的方法向服务器端发送请求信息。<br>(３)代理对象通过binder设备节点(/dev/binder)，把用户请求信息发送到Linux内核空间（内存共享），由Binder驱动获取并发送到服务进程。<br>(４)服务进程处理用户请求，并通过Linux内核的Binder驱动返回处理结果给客户端的代理对象。<br>(５)客户端收到服务端的返回结果。<br><img src="http://lzyblog.b0.upaiyun.com/binder/binderframe2.jpg" alt="  "></p>
+<h4 id="四大角色的分工"><strong>四大角色的分工</strong></h4><ul>
+<li><p><strong>Binder Driver</strong>：Binder驱动虽然默默无闻，却是通信的核心。<br>尽管名叫‘驱动’，实际上和硬件设备没有任何关系，只是实现方式和设备驱动程序是一样的。驱动和应用程序之间定义了一套接口协议，主要功能由open()、ioctl()接口实现。</p>
+</li>
+<li><p><strong>ServiceManager</strong>：相当于DNS，为服务端的地址取一个好记的名字，便于客户端访问。<br>有一个有趣的事情，ServiceManager是一个进程，Server在另一个进程，Server向ServiceManager注册一个好记的名字必然会涉及进程间通信。当前实现的是进程间通信却又要用到进程间通信，这就好象蛋可以孵出鸡，前提却是要找只鸡来孵蛋。Binder的实现比较巧妙：预先创造一只‘0号鸡’来孵蛋：ServiceManager和其它进程同样采用Binder通信，这里ServiceManager是Server端，有自己的Binder对象（实体），其它Server和Client进程在这里都是Client，需要通过这个Binder的引用来实现Binder的注册，查询和获取。ServiceManager提供的Binder比较特殊，它没有名字也不需要注册，这个Binder的引用在所有Client中都固定为0而无须通过其它手段获得。类比网络通信，0号引用就好比域名服务器的地址，你必须预先手工或动态配置好。要注意这里说的Client是相对SServiceManager而言的，它本身可能是个提供服务的Server，但对ServiceManager来说它仍然是个Client。</p>
+</li>
+<li><p><strong>Server</strong>：提供各种各样的服务<br>Server利用保留的0号引用向ServiceManager注册了Binder实体及其名字，ServiceManager收到后，将‘张三’和Binder引用填入到一张查找表中。Client就可以通过名字获得该Binder的引用了。</p>
+</li>
+<li><p><strong>Client</strong>：获取Server的服务<br>Client也利用保留的0号引用向ServiceManager请求访问某个Binder：我申请获得名字叫‘张三’的Binder的引用。ServiceManager收到这个连接请求，从请求数据包里获得Binder的名字，在查找表里找到该名字对应的条目，从条目中取出Binder的引用，将该引用作为回复发送给发起请求的Client。</p>
+</li>
+<li><p><strong>代理对象</strong>：是指在客户端应用程序中获取生成的Server代理（proxy）类对象。<br>从应用程序角度看代理对象和本地对象没有差别，都可以调用其方法，方法都是同步的，并且返回相应的结果。</p>
+</li>
+<li><p><strong>匿名Binder</strong>：并不是所有Binder都需要注册给ServiceManager广而告之的。<br>Server端可以通过已经建立的Binder连接将创建的Binder实体传给Client，当然这条已经建立的Binder连接必须是通过实名Binder实现。由于这个Binder没有向ServiceManager注册名字，所以是个匿名Binder。Client将会收到这个匿名Binder的引用，通过这个引用向位于Server中的实体发送请求。匿名Binder为通信双方建立一条私密通道，只要Server没有把匿名Binder发给别的进程，别的进程就无法通过穷举或猜测等任何方式获得该Binder的引用，向该Binder发送请求。</p>
+</li>
+</ul>
+<p>从面向对象的角度，这个Binder对象现在有了两个引用：一个位于ServiceManager中，一个位于发起请求的Client中。如果接下来有更多的Client请求该Binder，系统中就会有更多的引用指向该Binder，就象java里一个对象存在多个引用一样。而且类似的这些指向Binder的引用是强类型，从而确保只要有引用Binder实体就不会被释放掉。</p>
+<h2 id="Client和Server的通讯过程"><strong>Client和Server的通讯过程</strong></h2><h4 id="前戏"><strong>前戏</strong></h4><ul>
+<li><strong>获得ProcessState对象</strong>：一个进程会创建一个ProcessState单例对象，每个进程只能创建一个，作用是维护管理当前进程中所有服务代理对象（Service proxy）。具体代码：sp<processstate> proc(ProcessState::self());<br>在ProcessState中打开了一个binder设备文件，并返回一个fd（文件描述符），这个fd很重要，用来找到要通信的那个binder对象。</processstate></li>
+<li><strong>获得ServiceManager的代理对象</strong>：ServiceManager是服务管家，它负责系统服务的管理。Client是通过这个代理对象和Service Manager通讯的。具体代码：sp<iservicemanager> sm = defaultServiceManager(); 这个对象的handle为0，也就是说和ServiceManager通信都使用handle为0的binder。</iservicemanager></li>
+<li><strong>真正传输的对象IPCThreadState</strong>：IPCThreadState也是一个singleton的类型，一个进程中也只能有一个这样的对象。它在android的binder机制中扮演什么样的角色呢？IPCThreadState主要负责信息的传递，所有要到达binder驱动和驱动中出来的信息，都要由IPCThreadState来传递。不管是Client进程和Service进程都是需要用IPCThreadState来和binder设备通讯。</li>
+</ul>
+<h4 id="Server初始化（MediaService为例）"><strong>Server初始化（MediaService为例）</strong></h4><p>Server初始化的代码如下:</p>
+<p>//获得一个ProcessState实例<br>sp<processstate> proc(ProcessState::self());<br>//得到一个ServiceManager的代理对象<br>sp<iservicemanager> sm = defaultServiceManager();<br>//初始化MediaPlayerService服务，并向服务管家成功添加了这些服务。<br>MediaPlayerService::instantiate();<br>//启动Process的线程池，进入循环状态，以便接收来自客户端的请求<br>ProcessState::self()-&gt;startThreadPool();<br>//将IPCThreadState对象加入到刚才的线程池<br>IPCThreadState::self()-&gt;joinThreadPool();</iservicemanager></processstate></p>
+<p>作为Service进程，当他完成初始化工作之后，需要进入循环状态等待客户端的请求，Service进程调用它的IPCThreadState对象的joinThreadPool方法，开始轮询binder设备，等待客户端请求的到来。</p>
+<h4 id="MediaService通信"><strong>MediaService通信</strong></h4><p><img src="http://lzyblog.b0.upaiyun.com/binder/mediaservice.jpg" alt=""></p>
+<h2 id="Binder总结"><strong>Binder总结</strong></h2><p><img src="http://lzyblog.b0.upaiyun.com/binder/bindertranfer.png" alt=""><br>如果一个服务需要通过binder机制对外提供跨进程的接口，需要做下面这些事情。<br>（1） 第一步，需要为这个接口定义一个继承自IInterface的接口类，假设叫做IMyService。<br>（2） 第二步，需要定义两个binder类，一个是代理类BpMyService，继承BpInterface；另一个是实现类BnMyService，继承BnInterface。<br>（3） 第三步，定义BnMyService的子类，这个子类可以是任何名字，比如就叫MyService，在其中真正实现接口所提供的各个函数。<br>（4） 第四步，创建MyService的实例，注册到服务管理器，也可以在其它接口的函数中创建。</p>
+<p>这篇基本是Binder机制的入门介绍，以后有机会详细研究一下Binder机制。</p>
+<h2 id="引用资料"><strong>引用资料</strong></h2><ol>
+<li><p><a href="http://blog.csdn.net/universus/article/details/6211589" target="_blank" rel="external"> Android Bander设计与实现 - 设计篇 </a></p>
+</li>
+<li><p><a href="http://www.cnblogs.com/innost/archive/2011/01/09/1931456.html" target="_blank" rel="external">Android深入浅出之Binder机制</a></p>
+</li>
+<li><p><a href="http://blog.csdn.net/luoshengyang/article/details/6618363" target="_blank" rel="external">老罗的Android之旅</a></p>
+</li>
+<li><p><a href="http://w.baike.com/3fdeadabfa514f1faf372c589632f692.html" target="_blank" rel="external">Android学习笔记–Binder</a></p>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android高级编程之路/">Android高级编程之路</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Android-Binder-IPC/">Android Binder IPC</a>
+  </div>
+
+</div>
+
+
+<div class="article-share" id="share">
+
+<div class="share-jiathis">
+  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+     ralateuid:{"tsina":"1792237047"},hideMore:false}
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+1393984285215619" charset="utf-8"></script>      
+
+ </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/01/20/AndroidAntPackage/"  title="Android多渠道打包工具(完美支持中文属性)">
+ <strong>下一篇：</strong><br/> 
+ <span>Android多渠道打包工具(完美支持中文属性)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android_IPC_为何设计Binder"><span class="toc-number">1.</span> <span class="toc-text">Android IPC 为何设计Binder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Binder总体概述"><span class="toc-number">2.</span> <span class="toc-text">Binder总体概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Binder框架及概述"><span class="toc-number">2.0.1.</span> <span class="toc-text">Binder框架及概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四大角色"><span class="toc-number">2.0.2.</span> <span class="toc-text">四大角色</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通讯模型"><span class="toc-number">2.0.3.</span> <span class="toc-text">通讯模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四大角色的分工"><span class="toc-number">2.0.4.</span> <span class="toc-text">四大角色的分工</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Client和Server的通讯过程"><span class="toc-number">3.</span> <span class="toc-text">Client和Server的通讯过程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#前戏"><span class="toc-number">3.0.1.</span> <span class="toc-text">前戏</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Server初始化（MediaService为例）"><span class="toc-number">3.0.2.</span> <span class="toc-text">Server初始化（MediaService为例）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MediaService通信"><span class="toc-number">3.0.3.</span> <span class="toc-text">MediaService通信</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Binder总结"><span class="toc-number">4.</span> <span class="toc-text">Binder总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用资料"><span class="toc-number">5.</span> <span class="toc-text">引用资料</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<section class="author-info">
+		
+			<p> Hello ,I&#39;m Liuzhiyong.</p>
+		
+		
+			<p>	This is my blog in github page.</p>
+		
+	</section>
+	 
+</div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Android开源库-网络/" title="Android开源库-网络">Android开源库-网络<sup>9</sup></a></li>
+		
+			<li><a href="/categories/Android性能优化/" title="Android性能优化">Android性能优化<sup>2</sup></a></li>
+		
+			<li><a href="/categories/Android高级编程之路/" title="Android高级编程之路">Android高级编程之路<sup>3</sup></a></li>
+		
+			<li><a href="/categories/编程-踩过的那些坑/" title="编程-踩过的那些坑">编程-踩过的那些坑<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://defshine.github.io/archives.html" target="_blank" title="defshine">defshine's Blog</a></li>
+      <li><a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea's Blog</a></li>
+      <li><a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家's Blog</a></li>
+      <li><a href="http://stormzhang.github.io/" target="_blank" title="storm">Storm's Blog</a></li>
+      <li><a href="http://hymanwang.github.io/" target="_blank" title="Hyman">Hyman's Blog</a></li>
+      <li><a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖CSDN">郭霖's Blog</a></li>
+      <li><a href="http://blog.csdn.net/xyz_lmn/" target="_blank" title="张兴业CSDN">张兴业's Blog</a></li>
+      <li><a href="http://hukai.me/" target="_blank" title="hukai">胡凯's Blog</a></li>
+      <li><a href="http://wuchong.me" target="_blank" title="WuChong">Jark's Blog</a></li>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+    </ul>
+</div>
+
+  
+  <div class="widget-wrap">
+  <p class="asidetitle">最近发表</p>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/11/06/AndroidBinder/">Android IPC - Binder 学习总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1792237047&verifier=28da7c8b&dpc=1"></iframe>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	<!--
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Liuzhiyong. <br/>
+			This is my blog in github page.</p>
+	</section>
+	 
+	-->
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1792237047" target="_blank" class="icon-weibo" title="weibo"></a>
+		
+		
+		<a href="https://github.com/lzyickobe" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/4127783" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/lzyickobe" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/lzyickobe" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		
+		
+		<a href="mailto:lzyickobe@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2015 
+		
+		<a href="http://lzyickobe.github.io/about" target="_blank" title="刘智勇">刘智勇</a>
+		
+		</p>
+		<p>
+		<a href="https://www.upyun.com/" target="_blank"><img src="http://upfiles.b0.upaiyun.com/logo/120x60.png" alt="UPYUN"></a>
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"lzyblog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-55079140-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<script src="/js/totop.js"></script>
+
+
+
+
+  </body>
+</html>
