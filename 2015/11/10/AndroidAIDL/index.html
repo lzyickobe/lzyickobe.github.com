@@ -1,0 +1,520 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Android IPC - AIDL 学习总结 | lzy&#39;s blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="刘智勇">
+    
+    <meta name="description" content="前面一篇文章对Binder的机制进行了总结，但作为一个应用层开发者，其实很少能使用到Binder相关的技术。实际上Android framework为我们封装了Binder，使我们只需要轻松编写Java代码就可以进程间通信了，这个神奇的封装就是AIDL。相信有不少开发者对这个名字都非常熟悉，但让他来讲一下AIDL具体机制和使用场景可能又说不清，那么我们今天就来聊一聊AIDL。
+
+Android IPC 为何设计AIDL
+AIDL的概述
+如何使用AIDL
+AIDL的机制分析">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="lzyickobe" />
+    <meta name="twitter:title" content="Android IPC - AIDL 学习总结 | lzy&#39;s blog" />
+      
+    
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<!--
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="lzy&#39;s blog" title="lzy&#39;s blog"/></a>
+			</div>
+			-->
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="lzy&#39;s blog">lzy&#39;s blog</a></h1>
+				<h2 class="blog-motto">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/messages">留言板</a></li>
+					
+						<li><a href="/about">关于我</a></li>
+					
+					<li>
+					
+					</li>
+
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/10/AndroidAIDL/" title="Android IPC - AIDL 学习总结" itemprop="url">Android IPC - AIDL 学习总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="http://lzyickobe.github.io/about" title="刘智勇" target="_blank" itemprop="author">刘智勇</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-10T08:08:09.000Z" itemprop="datePublished"> 发表于 Nov 10 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android_IPC_为何设计AIDL"><span class="toc-number">1.</span> <span class="toc-text">Android IPC 为何设计AIDL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AIDL的概述"><span class="toc-number">2.</span> <span class="toc-text">AIDL的概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AIDL的基本概念"><span class="toc-number">2.0.1.</span> <span class="toc-text">AIDL的基本概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AIDL的使用场景"><span class="toc-number">2.0.2.</span> <span class="toc-text">AIDL的使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AIDL的注意事项"><span class="toc-number">2.0.3.</span> <span class="toc-text">AIDL的注意事项</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用AIDL"><span class="toc-number">3.</span> <span class="toc-text">如何使用AIDL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#创建AIDL文件"><span class="toc-number">3.0.1.</span> <span class="toc-text">创建AIDL文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Server端实现"><span class="toc-number">3.0.2.</span> <span class="toc-text">Server端实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Client端实现"><span class="toc-number">3.0.3.</span> <span class="toc-text">Client端实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AIDL的机制分析"><span class="toc-number">4.</span> <span class="toc-text">AIDL的机制分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#客户端绑定服务端"><span class="toc-number">4.0.1.</span> <span class="toc-text">客户端绑定服务端</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#客户端得到ServerBinder"><span class="toc-number">4.0.2.</span> <span class="toc-text">客户端得到ServerBinder</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#总结，以add()为例"><span class="toc-number">4.0.3.</span> <span class="toc-text">总结，以add()为例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用资料"><span class="toc-number">5.</span> <span class="toc-text">引用资料</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="http://liuzhiyong.org/2015/11/06/AndroidBinder/" target="_blank" rel="external">前面一篇文章</a>对Binder的机制进行了总结，但作为一个应用层开发者，其实很少能使用到Binder相关的技术。实际上Android framework为我们封装了Binder，使我们只需要轻松编写Java代码就可以进程间通信了，这个神奇的封装就是AIDL。相信有不少开发者对这个名字都非常熟悉，但让他来讲一下AIDL具体机制和使用场景可能又说不清，那么我们今天就来聊一聊AIDL。</p>
+<ol>
+<li>Android IPC 为何设计AIDL</li>
+<li>AIDL的概述</li>
+<li>如何使用AIDL</li>
+<li>AIDL的机制分析<a id="more"></a>
+</li>
+</ol>
+<h2 id="Android_IPC_为何设计AIDL"><strong>Android IPC 为何设计AIDL</strong></h2><ol>
+<li>AIDL是android为了方便开发者进行进程间通信，定义的一种语言。</li>
+<li>Android有一个跨进程间通信的工具Messenger，那为什么还设计AIDL呢？原因是AIDL可以处理多线程、多客户端并发访问的，而Messenger只能是单线程处理。</li>
+<li>Binder可以处理多线程、多客户端并发访问的进程间通信，那为什么还设计AIDL呢？实际上AIDL就是把Binder通讯的一些细节封装了起来，使得我们在JAVA层写IPC的代码时，不用考虑write、read、transact等操作，只需要把注意力专注在自身定义的接口上即可。</li>
+</ol>
+<p>这么讲还是有点晕吧，这篇文章就带大家看看AIDL到底帮我做了哪些事情，以为我们如何更好的使用AIDL。</p>
+<h2 id="AIDL的概述"><strong>AIDL的概述</strong></h2><h4 id="AIDL的基本概念"><strong>AIDL的基本概念</strong></h4><ul>
+<li><strong>AIDL语言</strong>: android interface definition language, Android接口描述语言，是接口描述语言中的一种。</li>
+<li><strong>封装</strong>: Android framework将Binder封装的几乎不可见了，应用开发者接触到的IPC大部分都是AIDL。</li>
+<li><strong>面向接口</strong>: AIDL IPC机制是面向接口的，像COM或Corba一样，但是更加轻量级。</li>
+<li><strong>CS模型</strong>: AIDL和Binder一样，采用的是Client-Server的通信模型。</li>
+<li><strong>proxy模式</strong>: 也和Binder一样，采用的是proxy设计模式，使用代理类在客户端和实现端传递数据。</li>
+</ul>
+<hr>
+<h4 id="AIDL的使用场景"><strong>AIDL的使用场景</strong></h4><p>官方文档特别提醒我们何时使用AIDL是必要的：只有你允许客户端从不同的应用程序为了进程间的通信而去访问你的service，以及想在你的service处理多线程。单线程的通信可以使用Messenger。</p>
+<p><strong>1. 定义AIDL接口</strong>：<br>在Server端用AIDL语言定义方法接口。和普通的接口内容没有什么特别，只是它的扩展名为.aidl，保存在src目录下。Android SDK tools就会在gen目录自动生成一个IBinder接口文件（java文件）。<br><strong>2. 实现这些接口</strong>:<br>Server端实现这个AIDL中的所有接口。<br><strong>3. 调用这些接口</strong>:<br>客户端程序要copy这个aidl文件到自己的src目录，通过代码绑定service并在IPC时从IBinder中调用方法。</p>
+<hr>
+<h4 id="AIDL的注意事项"><strong>AIDL的注意事项</strong></h4><ul>
+<li>对于Java编程语言的基本数据类型 (int, long, char, boolean等),String和CharSequence，集合接口类型List和Map，不需要import 语句。</li>
+<li>如果需要在AIDL中使用其他AIDL接口类型，需要import，即使是在相同包结构下。</li>
+<li>对于非基本数据类型，也不是String和CharSequence类型的，需要有方向指示，包括in、out和inout，in表示由客户端设置，out表示由服务端设置，inout是两者均可设置。</li>
+<li>AIDL只支持接口方法，不能公开static变量。</li>
+</ul>
+<hr>
+<h2 id="如何使用AIDL"><strong>如何使用AIDL</strong></h2><h4 id="创建AIDL文件"><strong>创建AIDL文件</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.liuzhiyong.calculate.aidl;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ICalculateAIDL</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">minus</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建一个aidl文件“ICalculateAIDL.aidl”，这个接口里面定义了要对外提供的服务，我们这里定义了计算加法和减法的函数。</p>
+<hr>
+<h4 id="Server端实现"><strong>Server端实现</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CalculateService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String TAG=<span class="string">"SERVER"</span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">CalculateService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate();</span><br><span class="line">    Log.e(TAG,<span class="string">"OnCreate"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">onStartCommand</span><span class="params">(Intent intent, <span class="keyword">int</span> flags, <span class="keyword">int</span> startId)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG,<span class="string">"onStartCommand"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.onStartCommand(intent, flags, startId);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG,<span class="string">"onBind"</span>);</span><br><span class="line">    <span class="keyword">return</span> mBinder;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onDestroy();</span><br><span class="line">    Log.e(TAG,<span class="string">"onDestroy"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onUnbind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG,<span class="string">"onUnbind"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.onUnbind(intent);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onRebind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG,<span class="string">"onRebind"</span>);</span><br><span class="line">    <span class="keyword">super</span>.onRebind(intent);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">final</span> ICalculateAIDL.Stub mBinder=<span class="keyword">new</span> ICalculateAIDL.Stub()&#123;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a+b;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minus</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> RemoteException </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> a-b;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建一个service，实现服务端方面的功能，顺手把生命周期中各方法都打印出来。重要的是生成一个ICalculateAIDL.Stub的mBinder对象（这个对象非常重要，我们后面再来讨论），并在onBind方法中返回它，这个mBinder完成了加法和减法函数的实现。<br>另外我们还需要在manifest文件中对该服务进行注册：<br><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;service</span><br><span class="line">  android:name=".CalculateService"</span><br><span class="line">  android:enabled="true"</span><br><span class="line">  android:exported="true" &gt;</span><br><span class="line">  &lt;intent-filter&gt;</span><br><span class="line">    &lt;action android:name="com.liuzhiyong.adil.calculate"/&gt;</span><br><span class="line">    &lt;category android:name="android.intent.category.DEFAULT"/&gt;</span><br><span class="line">  &lt;/intent-filter&gt;</span><br><span class="line">&lt;/service&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="Client端实现"><strong>Client端实现</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> id=v.getId();</span><br><span class="line">  <span class="keyword">switch</span> (id)&#123;</span><br><span class="line">    <span class="keyword">case</span> R.id.btn_bind: <span class="comment">//绑定service</span></span><br><span class="line">      Intent intent=<span class="keyword">new</span> Intent();</span><br><span class="line">      intent.setAction(<span class="string">"com.liuzhiyong.adil.calculate"</span>);</span><br><span class="line">      bindService(intent,mConnection, Context.BIND_AUTO_CREATE);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> R.id.btn_unbind: <span class="comment">//解绑service</span></span><br><span class="line">      <span class="keyword">if</span> (binded)&#123;</span><br><span class="line">          unbindService(mConnection);</span><br><span class="line">          binded=<span class="keyword">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> R.id.btn_add: <span class="comment">//调用server端的加法</span></span><br><span class="line">      <span class="keyword">if</span>(mCalculateAIDL!=<span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">int</span> res=mCalculateAIDL.add(<span class="number">3</span>,<span class="number">3</span>);</span><br><span class="line">          txt_res.setText(res+<span class="string">""</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">          e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>,<span class="string">"please rebind"</span>,Toast.LENGTH_SHORT).show();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> R.id.btn_minus:<span class="comment">//调用server端的减法</span></span><br><span class="line">      <span class="keyword">if</span>(mCalculateAIDL!=<span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          <span class="keyword">int</span> res=mCalculateAIDL.minus(<span class="number">9</span>,<span class="number">4</span>);</span><br><span class="line">          txt_res.setText(res+<span class="string">""</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">          e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        Toast.makeText(<span class="keyword">this</span>,<span class="string">"please rebind"</span>,Toast.LENGTH_SHORT).show();</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//连接Service的回调</span></span><br><span class="line"><span class="keyword">private</span> ServiceConnection mConnection=<span class="keyword">new</span> ServiceConnection() &#123;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName name, IBinder binder)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG,<span class="string">"connect"</span>);</span><br><span class="line">    binded=<span class="keyword">true</span>;</span><br><span class="line">    mCalculateAIDL=ICalculateAIDL.Stub.asInterface(binder);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="annotation">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName name)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG,<span class="string">"disconnect"</span>);</span><br><span class="line">    mCalculateAIDL=<span class="keyword">null</span>;</span><br><span class="line">    binded=<span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这段Client连接service方法应该很好理解，就不多废话了，下面就进入AIDL真正核心的机制分析。</p>
+<hr>
+<h2 id="AIDL的机制分析"><strong>AIDL的机制分析</strong></h2><p>上一章是个AIDL很简单的示例用法，并没有对其调用过程做分析，下面我们就开始从客户端的调用开始分析。</p>
+<h4 id="客户端绑定服务端"><strong>客户端绑定服务端</strong></h4><p>客户端调用bindservice方法来启动了service，连接服务端Service成功了会有回调:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName name, IBinder binder)</span> </span>&#123;</span><br><span class="line">    Log.e(TAG,<span class="string">"connect"</span>);</span><br><span class="line">    binded=<span class="keyword">true</span>;</span><br><span class="line">    mCalculateAIDL= ICalculateAIDL.Stub.asInterface(binder);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们从该onServiceConnected的参数中获取到一个Binder对象，我们通过此binder来与server进行通信。为了区分，我们称为clientBinder。</p>
+<hr>
+<h4 id="客户端得到ServerBinder"><strong>客户端得到ServerBinder</strong></h4><p>serverBinder = ICalculateAIDL.Stub.asInterface(binder);<br>我们先看一下Android tools帮我们生成的ICalculateAIDL.java有什么内容？<br><img src="http://img0.tuicool.com/2EB7FvF.png" alt=""><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.liuzhiyong.calculate.aidl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ICalculateAIDL</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">IInterface</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** Local-side IPC implementation stub class. */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Stub</span> <span class="keyword">extends</span> <span class="title">android</span>.<span class="title">os</span>.<span class="title">Binder</span> <span class="keyword">implements</span></span><br><span class="line">            <span class="title">com</span>.<span class="title">liuzhiyong</span>.<span class="title">calculate</span>.<span class="title">aidl</span>.<span class="title">ICalculateAIDL</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> java.lang.String DESCRIPTOR = <span class="string">"com.liuzhiyong.calculate.aidl.ICalculateAIDL"</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/** Construct the stub at attach it to the interface. */</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Stub</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.attachInterface(<span class="keyword">this</span>, DESCRIPTOR);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span><br><span class="line">         * Cast an IBinder object into an</span><br><span class="line">         * com.liuzhiyong.calculate.aidl.ICalculateAIDL interface, generating a</span><br><span class="line">         * proxy if needed.</span><br><span class="line">         */</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> com.liuzhiyong.calculate.aidl.<span class="function">ICalculateAIDL <span class="title">asInterface</span><span class="params">(</span><br><span class="line">                android.os.IBinder obj)</span> </span>&#123;</span><br><span class="line">                ......</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="keyword">public</span> android.os.<span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTransact</span><span class="params">(<span class="keyword">int</span> code, android.os.Parcel data,</span><br><span class="line">                android.os.Parcel reply, <span class="keyword">int</span> flags)</span></span><br><span class="line">                <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">                ......</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span></span><br><span class="line">                <span class="title">com</span>.<span class="title">liuzhiyong</span>.<span class="title">calculate</span>.<span class="title">aidl</span>.<span class="title">ICalculateAIDL</span> </span>&#123;</span><br><span class="line">            <span class="keyword">private</span> android.os.IBinder mRemote;</span><br><span class="line"></span><br><span class="line">            Proxy(android.os.IBinder remote) &#123;</span><br><span class="line">                mRemote = remote;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="keyword">public</span> android.os.<span class="function">IBinder <span class="title">asBinder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> mRemote;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">public</span> java.lang.<span class="function">String <span class="title">getInterfaceDescriptor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> DESCRIPTOR;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">                ......</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minus</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">                ......</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> android.os.RemoteException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minus</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> android.os.RemoteException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在我们来具体研究下代码，其实这里面的重点很简单，一个是Stub类，一个是Proxy类。</p>
+<ol>
+<li><p><strong>先看Stub类，Stub翻译成中文是存根的意思</strong><br>Stub对象是在服务端进程，是ICalculateAIDL的内部类，它继承自Binder并实现了这个生成的java接口ICalculateAIDL。讲了这么多，Stub究竟怎么理解呢。<strong>实际上，stub是为了帮助客户端和服务端通信的一个中介，Service的实现类需要去继承这个stub服务桩类，客户端bind服务端的service返回了一个clientBinder对象，通过调用ICalculateAIDL.Stub.asInterface(clientBinder);得到服务端的Binder。</strong><br>asInterface这个方法能得到Serverbinder对象了，那我们来看下asInterfce干了什么：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> com.liuzhiyong.calculate.aidl.<span class="function">ICalculateAIDL <span class="title">asInterface</span><span class="params">(android.os.IBinder obj)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> ((obj == <span class="keyword">null</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//根据包名获取本地实现的一个接口的实例，如果是本地service则可以获取到</span></span><br><span class="line">    android.os.IInterface iin = obj.queryLocalInterface(DESCRIPTOR);</span><br><span class="line">    <span class="keyword">if</span> (((iin != <span class="keyword">null</span>) &amp;&amp; (iin <span class="keyword">instanceof</span> com.liuzhiyong.calculate.aidl.ICalculateAIDL))) &#123;</span><br><span class="line">        <span class="comment">//如果得到的实例是ICalculateAIDL的对象，则返回</span></span><br><span class="line">        <span class="keyword">return</span> ((com.liuzhiyong.calculate.aidl.ICalculateAIDL) iin);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//如果无法得到本地实现的对象则会返回一个代理对象</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> com.liuzhiyong.calculate.aidl.ICalculateAIDL.Stub.Proxy(obj);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//简单来看，就做了两件事，首先在系统中查找注册的的service.</span></span><br><span class="line">    <span class="comment">//如果没有找到，那么一定是别的apk（别的进程）实现的service，于是返回一个此service的静态代理类对象供Client调用。</span></span><br><span class="line">    <span class="comment">//也就是什么意思呢，其实就是去查询是不是在同一个应用里去调用它，如果是同一个应用，直接本地调用就可以了。</span></span><br><span class="line">    <span class="comment">//如果不是本地接口，这时候会返回一个Proxy对象。</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>再看Proxy类，客户端通过proxy来调用服务端的接口方法</strong><br>Stub的一个内部类，也同样实现了ICalculateAIDL接口<br>接下来，我们重点来研究下Proxy类，这个东东又在搞什么？</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Proxy</span> <span class="keyword">implements</span> <span class="title">com</span>.<span class="title">liuzhiyong</span>.<span class="title">calculate</span>.<span class="title">aidl</span>.<span class="title">ICalculateAIDL</span> </span>&#123;</span><br><span class="line">      <span class="keyword">private</span> android.os.IBinder mRemote;</span><br><span class="line">      Proxy(android.os.IBinder remote) &#123;</span><br><span class="line">        mRemote = remote;</span><br><span class="line">      &#125;</span><br><span class="line">      ......</span><br><span class="line">      <span class="annotation">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">        android.os.Parcel _data = android.os.Parcel.obtain();</span><br><span class="line">        android.os.Parcel _reply = android.os.Parcel.obtain();</span><br><span class="line">        <span class="keyword">int</span> _result;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          _data.writeInterfaceToken(DESCRIPTOR);</span><br><span class="line">          <span class="comment">//将参数打包</span></span><br><span class="line">          _data.writeInt(a);</span><br><span class="line">          _data.writeInt(b);</span><br><span class="line">          <span class="comment">//调用binderDriver的提供的方法将参数发给服务端</span></span><br><span class="line">          mRemote.transact(Stub.TRANSACTION_add, _data, _reply, <span class="number">0</span>);</span><br><span class="line">          _reply.readException();</span><br><span class="line">          <span class="comment">//读取到返回结果</span></span><br><span class="line">          _result = _reply.readInt();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">          _reply.recycle();</span><br><span class="line">          _data.recycle();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> _result;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="annotation">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minus</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">        ......<span class="comment">//同上</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>首先proxy的构造函数把我们将clientBinder传进来了，同时它也实现了ICalculateAIDL接口，我们以add方法为例，里面将参数打包发送给Server端。在Server端收到请求后，会调用到Stub类中的onTransact方法，具体onTransact()方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTransact</span><span class="params">(<span class="keyword">int</span> code, android.os.Parcel data, android.os.Parcel reply, <span class="keyword">int</span> flags)</span> <span class="keyword">throws</span> android.os.RemoteException </span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (code) &#123;</span><br><span class="line">        <span class="keyword">case</span> INTERFACE_TRANSACTION: &#123;</span><br><span class="line">          reply.writeString(DESCRIPTOR);</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> TRANSACTION_add: &#123;</span><br><span class="line">          data.enforceInterface(DESCRIPTOR);</span><br><span class="line">          <span class="keyword">int</span> _arg0;</span><br><span class="line">          _arg0 = data.readInt();</span><br><span class="line">          <span class="keyword">int</span> _arg1;</span><br><span class="line">          _arg1 = data.readInt();</span><br><span class="line">          <span class="comment">//调用我们实现好的方法</span></span><br><span class="line">          <span class="keyword">int</span> _result = <span class="keyword">this</span>.add(_arg0, _arg1); </span><br><span class="line">          reply.writeNoException();</span><br><span class="line">          <span class="comment">//把结果返回</span></span><br><span class="line">          reply.writeInt(_result); </span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> TRANSACTION_minus: &#123;</span><br><span class="line">          data.enforceInterface(DESCRIPTOR);</span><br><span class="line">          <span class="keyword">int</span> _arg0;</span><br><span class="line">          _arg0 = data.readInt();</span><br><span class="line">          <span class="keyword">int</span> _arg1;</span><br><span class="line">          _arg1 = data.readInt();</span><br><span class="line">          <span class="keyword">int</span> _result = <span class="keyword">this</span>.minus(_arg0, _arg1);</span><br><span class="line">          reply.writeNoException();</span><br><span class="line">          reply.writeInt(_result);</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.onTransact(code, data, reply, flags);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在onTransact中，真正调用add()或者minus()方法，得到返回结果，然后结果打包返回给Proxy处理，最后返回给客户端。</p>
+<hr>
+<h4 id="总结，以add()为例"><strong>总结，以add()为例</strong></h4><p><strong>1. 客户端绑定Service</strong>：<br>客户端绑定服务端的service，绑定成功后回调onServiceConnected，在参数里得到ClientBinder。</p>
+<p><strong>2. 客户端得到ServerBinder</strong>：<br>客户端通过mCalculateAIDL = ICalculateAIDL.Stub.asInterface(binder);这个方法得到真正可使用的ServerBinder对象mCalculateAIDL。asInterface会判断此binder是不是本地binder，如果是本地的（在一个进程中），直接返回这个binder对象。 如果是远端的（不在一个进程中），返回一个proxy对象，这个proxy也实现了ICalculateAIDL接口。</p>
+<p><strong>3. 客户端调用add()</strong>：<br>Client端通过ServerBinder调用add方法发送给服务端：mCalculateAIDL.add(3,3); </p>
+<p><strong>4. 服务端处理add()</strong>：<br>如果是本地binder对象，直接调用add()方法。如果是远端binder对象，proxy代理调用add方法，把相关参数打包发给Server端，Server收到后，在Stub中调用onTransact()方法，此时会调用真正的add方法，然后把结果打包发回给Client端。</p>
+<p><strong>5. 客户端得到result</strong>：<br>Client收到计算结果6，over。</p>
+<p><strong>AIDL 交互过程client&lt;–&gt;proxy&lt;–&gt;stub&lt;–&gt;service</strong><br>stub和proxy是为了方便client/service交互而生成出来的代码，这样client/service的代码就会比较干净，不会嵌入很多很难懂的与业务无关的代码。这也是AIDL的目标，让开发者只关心自己设计的业务接口，不关心底层binder传输的细节。</p>
+<h2 id="引用资料"><strong>引用资料</strong></h2><ol>
+<li><p><a href="http://www.tuicool.com/articles/uEjQbuF" target="_blank" rel="external">从AIDL开始谈Android进程间Binder通信机制</a></p>
+</li>
+<li><p><a href="http://zhidao.baidu.com/link?url=GxpAGfYqYNpLDgO9kknv_kumW4Y-gI6Bc7lqWuc4sFL_W9PrVVLKBSty79tsU2Rjcp4jPHb7HzCx_VvKG4mmca" target="_blank" rel="external">Android service 中的stub类是什么意思？</a></p>
+</li>
+<li><p><a href="http://www.2cto.com/kf/201406/312244.html" target="_blank" rel="external">彻底明白Android中AIDL及其使用</a></p>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Android高级编程之路/">Android高级编程之路</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Android-Binder-IPC-AIDL/">Android Binder IPC AIDL</a>
+  </div>
+
+</div>
+
+
+<div class="article-share" id="share">
+
+<div class="share-jiathis">
+  
+<div class="jiathis_style_24x24">
+	<a class="jiathis_button_tsina"></a>
+	<a class="jiathis_button_weixin"></a>
+	<a class="jiathis_button_renren"></a>
+	<a class="jiathis_button_qzone"></a>
+	<a class="jiathis_button_googleplus"></a>
+	<a class="jiathis_button_douban"></a>
+	<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+    var jiathis_config={
+    data_track_clickback:true,
+    sm:"copy,renren,cqq",
+    pic:"",
+    summary:"",
+     ralateuid:{"tsina":"1792237047"},hideMore:false}
+    
+  </script> 
+<script type="text/javascript" src="//v3.jiathis.com/code/jia.js?uid=
+1393984285215619" charset="utf-8"></script>      
+
+ </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2015/11/06/AndroidBinder/"  title="Android IPC - Binder 学习总结">
+ <strong>下一篇：</strong><br/> 
+ <span>Android IPC - Binder 学习总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android_IPC_为何设计AIDL"><span class="toc-number">1.</span> <span class="toc-text">Android IPC 为何设计AIDL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AIDL的概述"><span class="toc-number">2.</span> <span class="toc-text">AIDL的概述</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AIDL的基本概念"><span class="toc-number">2.0.1.</span> <span class="toc-text">AIDL的基本概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AIDL的使用场景"><span class="toc-number">2.0.2.</span> <span class="toc-text">AIDL的使用场景</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AIDL的注意事项"><span class="toc-number">2.0.3.</span> <span class="toc-text">AIDL的注意事项</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何使用AIDL"><span class="toc-number">3.</span> <span class="toc-text">如何使用AIDL</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#创建AIDL文件"><span class="toc-number">3.0.1.</span> <span class="toc-text">创建AIDL文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Server端实现"><span class="toc-number">3.0.2.</span> <span class="toc-text">Server端实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Client端实现"><span class="toc-number">3.0.3.</span> <span class="toc-text">Client端实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AIDL的机制分析"><span class="toc-number">4.</span> <span class="toc-text">AIDL的机制分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#客户端绑定服务端"><span class="toc-number">4.0.1.</span> <span class="toc-text">客户端绑定服务端</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#客户端得到ServerBinder"><span class="toc-number">4.0.2.</span> <span class="toc-text">客户端得到ServerBinder</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#总结，以add()为例"><span class="toc-number">4.0.3.</span> <span class="toc-text">总结，以add()为例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#引用资料"><span class="toc-number">5.</span> <span class="toc-text">引用资料</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div id="authorInfo">
+	
+		<div class="author-logo"></div>		
+	
+	
+	<section class="author-info">
+		
+			<p> Hello ,I&#39;m Liuzhiyong.</p>
+		
+		
+			<p>	This is my blog in github page.</p>
+		
+	</section>
+	 
+</div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/Android开源库-网络/" title="Android开源库-网络">Android开源库-网络<sup>9</sup></a></li>
+		
+			<li><a href="/categories/Android性能优化/" title="Android性能优化">Android性能优化<sup>2</sup></a></li>
+		
+			<li><a href="/categories/Android高级编程之路/" title="Android高级编程之路">Android高级编程之路<sup>4</sup></a></li>
+		
+			<li><a href="/categories/编程-踩过的那些坑/" title="编程-踩过的那些坑">编程-踩过的那些坑<sup>2</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://defshine.github.io/archives.html" target="_blank" title="defshine">defshine's Blog</a></li>
+      <li><a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea's Blog</a></li>
+      <li><a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家's Blog</a></li>
+      <li><a href="http://stormzhang.github.io/" target="_blank" title="storm">Storm's Blog</a></li>
+      <li><a href="http://hymanwang.github.io/" target="_blank" title="Hyman">Hyman's Blog</a></li>
+      <li><a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖CSDN">郭霖's Blog</a></li>
+      <li><a href="http://blog.csdn.net/xyz_lmn/" target="_blank" title="张兴业CSDN">张兴业's Blog</a></li>
+      <li><a href="http://hukai.me/" target="_blank" title="hukai">胡凯's Blog</a></li>
+      <li><a href="http://wuchong.me" target="_blank" title="WuChong">Jark's Blog</a></li>
+      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
+    </ul>
+</div>
+
+  
+  <div class="widget-wrap">
+  <p class="asidetitle">最近发表</p>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/11/10/AndroidAIDL/">Android IPC - AIDL 学习总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="weiboshow">
+  <p class="asidetitle">新浪微博</p>
+    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1792237047&verifier=28da7c8b&dpc=1"></iframe>
+
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	<!--
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m Liuzhiyong. <br/>
+			This is my blog in github page.</p>
+	</section>
+	 
+	-->
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/1792237047" target="_blank" class="icon-weibo" title="weibo"></a>
+		
+		
+		<a href="https://github.com/lzyickobe" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		<a href="http://stackoverflow.com/users/4127783" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
+		
+		
+		<a href="https://twitter.com/lzyickobe" target="_blank" class="icon-twitter" title="twitter"></a>
+		
+		
+		<a href="https://www.facebook.com/lzyickobe" target="_blank" class="icon-facebook" title="facebook"></a>
+		
+		
+		
+		
+		<a href="mailto:lzyickobe@163.com" target="_blank" class="icon-email" title="Email Me"></a>
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2015 
+		
+		<a href="http://lzyickobe.github.io/about" target="_blank" title="刘智勇">刘智勇</a>
+		
+		</p>
+		<p>
+		<a href="https://www.upyun.com/" target="_blank"><img src="http://upfiles.b0.upaiyun.com/logo/120x60.png" alt="UPYUN"></a>
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"lzyblog"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-55079140-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<script src="/js/totop.js"></script>
+
+
+
+
+  </body>
+</html>

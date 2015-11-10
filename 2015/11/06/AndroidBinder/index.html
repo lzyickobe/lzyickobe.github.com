@@ -9,7 +9,7 @@
     
     <meta name="author" content="刘智勇">
     
-    <meta name="description" content="最近想学些Android Framework中的东西，必经之路就是binder，不夸张的说，binder是整个android架构 的基础。本文从Binder的基本概念和框架入手，讲述binder机制的点点滴滴。全文分为以下四部分：1、Android为何设计binder进行进程间通信。2、Binder的框架结构和概述。3、Client和Server通信过程。4、binder总结。
+    <meta name="description" content="最近想学些Android Framework中的东西，必经之路就是Binder。Binder并不是Android最早开始使用，它发源于Be和Palm之前的OpenBinder，由Dianne Hackborn领导开发。Hackborn目前在Google工作，他是这样描述binder的：In the Android platform, the binder is used for nearly everything that happens across processes in the core platform。不夸张的说，binder是整个android架构的基础。本文从Binder的基本概念和框架入手，讲述binder机制的点点滴滴。全文分为以下四部分：1、Android为何设计binder进行进程间通信。2、Binder的框架结构和概述。3、Client和Server通信过程。4、binder总结。
 PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总结，而且本文只是binder的入门，不涉及到过多底层的描述，要想更多了解binder的内容，还请移步到引用文献中老罗和邓凡平老师的文章。">
     
     
@@ -93,7 +93,7 @@ PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总
 		
 		</div>
 		
-		<p>最近想学些Android Framework中的东西，必经之路就是binder，不夸张的说，binder是整个android架构 的基础。本文从Binder的基本概念和框架入手，讲述binder机制的点点滴滴。全文分为以下四部分：1、Android为何设计binder进行进程间通信。2、Binder的框架结构和概述。3、Client和Server通信过程。4、binder总结。</p>
+		<p>最近想学些Android Framework中的东西，必经之路就是Binder。Binder并不是Android最早开始使用，它发源于Be和Palm之前的OpenBinder，由Dianne Hackborn领导开发。Hackborn目前在Google工作，他是这样描述binder的：<br>In the Android platform, the binder is used for nearly everything that happens across processes in the core platform。不夸张的说，binder是整个android架构的基础。本文从Binder的基本概念和框架入手，讲述binder机制的点点滴滴。全文分为以下四部分：1、Android为何设计binder进行进程间通信。2、Binder的框架结构和概述。3、Client和Server通信过程。4、binder总结。</p>
 <p>PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总结，而且本文只是binder的入门，不涉及到过多底层的描述，要想更多了解binder的内容，还请移步到引用文献中老罗和邓凡平老师的文章。<br><a id="more"></a></p>
 <h2 id="Android_IPC_为何设计Binder"><strong>Android IPC 为何设计Binder</strong></h2><p>Android 系统中，为了向应用开发者提供丰富多样的功能，这种通信方式更是无处不在，诸如媒体播放，音频视频捕获，通知，到各种让手机更智能的传感器（加速度，方位，温度，光亮度等）都由不同的Server负责管理，应用程序只需做为Client与这些Server建立连接便可以使用这些服务，花很少的时间和精力就能开发出令人眩目的功能。</p>
 <p>设计Binder的原因主要有以下3个：</p>
@@ -135,8 +135,7 @@ PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总
 <li><strong>获得ServiceManager的代理对象</strong>：ServiceManager是服务管家，它负责系统服务的管理。Client是通过这个代理对象和Service Manager通讯的。具体代码：sp<iservicemanager> sm = defaultServiceManager(); 这个对象的handle为0，也就是说和ServiceManager通信都使用handle为0的binder。</iservicemanager></li>
 <li><strong>真正传输的对象IPCThreadState</strong>：IPCThreadState也是一个singleton的类型，一个进程中也只能有一个这样的对象。它在android的binder机制中扮演什么样的角色呢？IPCThreadState主要负责信息的传递，所有要到达binder驱动和驱动中出来的信息，都要由IPCThreadState来传递。不管是Client进程和Service进程都是需要用IPCThreadState来和binder设备通讯。</li>
 </ul>
-<h4 id="Server初始化（MediaService为例）"><strong>Server初始化（MediaService为例）</strong></h4><p>Server初始化的代码如下:</p>
-<p>//获得一个ProcessState实例<br>sp<processstate> proc(ProcessState::self());<br>//得到一个ServiceManager的代理对象<br>sp<iservicemanager> sm = defaultServiceManager();<br>//初始化MediaPlayerService服务，并向服务管家成功添加了这些服务。<br>MediaPlayerService::instantiate();<br>//启动Process的线程池，进入循环状态，以便接收来自客户端的请求<br>ProcessState::self()-&gt;startThreadPool();<br>//将IPCThreadState对象加入到刚才的线程池<br>IPCThreadState::self()-&gt;joinThreadPool();</iservicemanager></processstate></p>
+<h4 id="Server初始化（MediaService为例）"><strong>Server初始化（MediaService为例）</strong></h4><p>Server初始化的代码如下:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获得一个ProcessState实例</span></span><br><span class="line"><span class="function">sp&lt;ProcessState&gt; <span class="title">proc</span><span class="params">(ProcessState::self()</span>)</span>;</span><br><span class="line"><span class="comment">//得到一个ServiceManager的代理对象</span></span><br><span class="line">sp&lt;IServiceManager&gt; sm = defaultServiceManager();</span><br><span class="line"><span class="comment">//初始化MediaPlayerService服务，并向服务管家成功添加了这些服务。</span></span><br><span class="line">MediaPlayerService::instantiate();</span><br><span class="line"><span class="comment">//启动Process的线程池，进入循环状态，以便接收来自客户端的请求</span></span><br><span class="line">ProcessState::self()-&gt;startThreadPool();</span><br><span class="line"><span class="comment">//将IPCThreadState对象加入到刚才的线程池</span></span><br><span class="line">IPCThreadState::self()-&gt;joinThreadPool();</span><br></pre></td></tr></table></figure></p>
 <p>作为Service进程，当他完成初始化工作之后，需要进入循环状态等待客户端的请求，Service进程调用它的IPCThreadState对象的joinThreadPool方法，开始轮询binder设备，等待客户端请求的到来。</p>
 <h4 id="MediaService通信"><strong>MediaService通信</strong></h4><p><img src="http://lzyblog.b0.upaiyun.com/binder/mediaservice.jpg" alt=""></p>
 <h2 id="Binder总结"><strong>Binder总结</strong></h2><p><img src="http://lzyblog.b0.upaiyun.com/binder/bindertranfer.png" alt=""><br>如果一个服务需要通过binder机制对外提供跨进程的接口，需要做下面这些事情。<br>（1） 第一步，需要为这个接口定义一个继承自IInterface的接口类，假设叫做IMyService。<br>（2） 第二步，需要定义两个binder类，一个是代理类BpMyService，继承BpInterface；另一个是实现类BnMyService，继承BnInterface。<br>（3） 第三步，定义BnMyService的子类，这个子类可以是任何名字，比如就叫MyService，在其中真正实现接口所提供的各个函数。<br>（4） 第四步，创建MyService的实例，注册到服务管理器，也可以在其它接口的函数中创建。</p>
@@ -204,6 +203,14 @@ PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2015/11/10/AndroidAIDL/" title="Android IPC - AIDL 学习总结">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Android IPC - AIDL 学习总结</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2015/01/20/AndroidAntPackage/"  title="Android多渠道打包工具(完美支持中文属性)">
@@ -259,7 +266,7 @@ PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总
 		
 			<li><a href="/categories/Android性能优化/" title="Android性能优化">Android性能优化<sup>2</sup></a></li>
 		
-			<li><a href="/categories/Android高级编程之路/" title="Android高级编程之路">Android高级编程之路<sup>3</sup></a></li>
+			<li><a href="/categories/Android高级编程之路/" title="Android高级编程之路">Android高级编程之路<sup>4</sup></a></li>
 		
 			<li><a href="/categories/编程-踩过的那些坑/" title="编程-踩过的那些坑">编程-踩过的那些坑<sup>2</sup></a></li>
 		
@@ -290,7 +297,7 @@ PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总
       <ul>
         
           <li>
-            <a href="/2015/11/06/AndroidBinder/">Android IPC - Binder 学习总结</a>
+            <a href="/2015/11/10/AndroidAIDL/">Android IPC - AIDL 学习总结</a>
           </li>
         
       </ul>
