@@ -69,7 +69,7 @@
 <script type="text/javascript" id="hexo.configuration">
   var CONFIG = {
     scheme: 'Mist',
-    sidebar: 'post',
+    sidebar: 'always',
     motion: true
   };
 </script>
@@ -142,6 +142,16 @@
               <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
             
             首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
           </a>
         </li>
       
@@ -270,27 +280,27 @@
       
         <span itemprop="articleBody"><p>接着上一篇，我们继续来分析HttpURLConnection的使用，以及两者的共同点和区别。<br><a id="more"></a></p>
 <h2 id="用法"><strong>用法</strong></h2><hr>
-<h3 id="HttpURLConnection的用法"><strong>HttpURLConnection的用法</strong></h3><h4 id="一、创建HttpURLConnection对象"><strong>一、创建HttpURLConnection对象</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">URL url = <span class="keyword">new</span> URL(<span class="string">"http://localhost:8080/TestHttpURLConnectionPro/index.jsp"</span>); </span><br><span class="line">URLConnection urlConnection = url.openConnection();</span><br><span class="line">HttpURLConnection httpUrlConnection = (HttpURLConnection) urlConnection;</span><br></pre></td></tr></table></figure>
+<h3 id="HttpURLConnection的用法"><strong>HttpURLConnection的用法</strong></h3><h4 id="一、创建HttpURLConnection对象"><strong>一、创建HttpURLConnection对象</strong></h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">URL url = <span class="keyword">new</span> URL(<span class="string">"http://localhost:8080/TestHttpURLConnectionPro/index.jsp"</span>); </span><br><span class="line">URLConnection urlConnection = url.openConnection();</span><br><span class="line">HttpURLConnection httpUrlConnection = (HttpURLConnection) urlConnection;</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>这个创建方法大家应该都很熟悉了，可能会认为下文中使用的HttpURLConnection的API的实现就在HttpURLConnection中了。这里要注意一下，其实这个HttpURLConnection是一个抽象类。</p>
 </li>
 <li><p>也就是说里面很多API函数都不在这儿实现的，那在哪实现呢。翻开java源码，可以看到，URL.openConnection()的实现是在java.net.URL类中。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//java.net.URL类里面的openConnection方法：  </span></span><br><span class="line"><span class="function"><span class="keyword">public</span> URLConnection <span class="title">openConnection</span><span class="params">(Proxy proxy)</span></span>&#123;  </span><br><span class="line">   …  </span><br><span class="line">   <span class="keyword">return</span> handler.openConnection(<span class="keyword">this</span>, proxy); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//java.net.URL类里面的openConnection方法：  </span></span><br><span class="line"><span class="function"><span class="keyword">public</span> URLConnection <span class="title">openConnection</span><span class="params">(Proxy proxy)</span></span>&#123;  </span><br><span class="line">   …  </span><br><span class="line">   <span class="keyword">return</span> handler.openConnection(<span class="keyword">this</span>, proxy); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>这里的handler又是什么呢，跟进去，发现Handler是sun.net.www.protocol.http.Handler这个java类，继承java.net.URLStreamHandler类，是用来处理http连接请求响应的。 继续跟踪代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Handler的方法</span></span><br><span class="line"><span class="keyword">protected</span> java.net.<span class="function">URLConnection <span class="title">openConnection</span><span class="params">(URL u, Proxy p)</span> <span class="keyword">throws</span> IOException </span>&#123;  </span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> HttpURLConnection(u, p, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//Handler的方法</span></span><br><span class="line"><span class="keyword">protected</span> java.net.<span class="function">URLConnection <span class="title">openConnection</span><span class="params">(URL u, Proxy p)</span> <span class="keyword">throws</span> IOException </span>&#123;  </span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> HttpURLConnection(u, p, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>最终发现只是简单的生成了HttpURLConnection对象，其实最重要的HttpURLConnection就在这里了，这个是sun.net.www.protocl.http.HttpURLConnection类的对象，继承java.net.HttpURLConnection。也就是说我们之后所用的API实现都在sun.net.www.protocl.http.HttpURLConnection这个类里面。所以大家想要看HttpURLConnection的源码实现的话，需要到这个类中去查看。</p>
 <p>  好了，说了这么多，下面还是介绍HttpURLConnection常用的API的使用吧。</p>
 </li>
 </ul>
-<h4 id="二、HttpURLConnection参数设置"><strong>二、HttpURLConnection参数设置</strong></h4><p>1、设置是否向httpUrlConnection输出，默认情况下是false。使用httpUrlConnection.getOutputStream()，把内容输出到远程服务器上。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setDoOutput(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
-<p>2、设置是否从httpUrlConnection读入，默认情况下是true。使用httpUrlConnection.getInputStream()，从远程服务器上得到响应的内容。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setDoInput(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
-<p>3、是否使用缓存。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setUseCaches(<span class="keyword">false</span>);</span><br></pre></td></tr></table></figure></p>
-<p>4、设定传送的内容类型是可序列化的java对象 (如果不设此项,在传送序列化对象时,当WEB服务默认的不是这种类型时可能抛java.io.EOFException)。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setRequestProperty(<span class="string">"Content-type"</span>, <span class="string">"application/x-java-serialized-object"</span>);</span><br></pre></td></tr></table></figure></p>
-<p>5、设定请求的方法为”POST”，默认是GET 。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setRequestMethod(<span class="string">"POST"</span>);</span><br></pre></td></tr></table></figure></p>
-<h4 id="三、HttpURLConnection连接"><strong>三、HttpURLConnection连接</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.connect(); </span><br><span class="line"><span class="comment">//此处getOutputStream会隐含的进行connect,所以在开发中不调用上述的connect()也可以</span></span><br><span class="line">OutputStream outStrm = httpUrlConnection.getOutputStream();</span><br></pre></td></tr></table></figure>
-<h4 id="四、HttpURLConnection写数据与发送数据"><strong>四、HttpURLConnection写数据与发送数据</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 现在通过输出流对象构建对象输出流对象，以实现输出可序列化的对象。 </span></span><br><span class="line">ObjectOutputStream objOutputStrm = <span class="keyword">new</span> ObjectOutputStream(outStrm); </span><br><span class="line"><span class="comment">// 向对象输出流写出数据，这些数据将存到内存缓冲区中 </span></span><br><span class="line">objOutputStrm.writeObject(<span class="keyword">new</span> String(<span class="string">"我是测试数据"</span>)); </span><br><span class="line"><span class="comment">// 刷新对象输出流，将任何字节都写入潜在的流中（些处为ObjectOutputStream） </span></span><br><span class="line">objOutputStm.flush(); </span><br><span class="line"><span class="comment">// 关闭流对象。此时，不能再向对象输出流写入任何数据，先前写入的数据存在于内存缓冲区中, </span></span><br><span class="line"><span class="comment">// 在调用下边的getInputStream()函数时才把准备好的http请求正式发送到服务器 </span></span><br><span class="line">objOutputStm.close(); </span><br><span class="line"><span class="comment">// 调用HttpURLConnection连接对象的getInputStream()函数, </span></span><br><span class="line"><span class="comment">// 将内存缓冲区中封装好的完整的HTTP请求电文发送到服务端。</span></span><br><span class="line"><span class="comment">// &lt;===注意，实际发送请求的代码段就在这里</span></span><br><span class="line">InputStream inStrm = httpConn.getInputStream();</span><br></pre></td></tr></table></figure>
+<h4 id="二、HttpURLConnection参数设置"><strong>二、HttpURLConnection参数设置</strong></h4><p>1、设置是否向httpUrlConnection输出，默认情况下是false。使用httpUrlConnection.getOutputStream()，把内容输出到远程服务器上。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">httpUrlConnection.setDoOutput(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
+<p>2、设置是否从httpUrlConnection读入，默认情况下是true。使用httpUrlConnection.getInputStream()，从远程服务器上得到响应的内容。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">httpUrlConnection.setDoInput(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
+<p>3、是否使用缓存。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">httpUrlConnection.setUseCaches(<span class="keyword">false</span>);</span><br></pre></td></tr></table></figure></p>
+<p>4、设定传送的内容类型是可序列化的java对象 (如果不设此项,在传送序列化对象时,当WEB服务默认的不是这种类型时可能抛java.io.EOFException)。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">httpUrlConnection.setRequestProperty(<span class="string">"Content-type"</span>, <span class="string">"application/x-java-serialized-object"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>5、设定请求的方法为”POST”，默认是GET 。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">httpUrlConnection.setRequestMethod(<span class="string">"POST"</span>);</span><br></pre></td></tr></table></figure></p>
+<h4 id="三、HttpURLConnection连接"><strong>三、HttpURLConnection连接</strong></h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">httpUrlConnection.connect(); </span><br><span class="line"><span class="comment">//此处getOutputStream会隐含的进行connect,所以在开发中不调用上述的connect()也可以</span></span><br><span class="line">OutputStream outStrm = httpUrlConnection.getOutputStream();</span><br></pre></td></tr></table></figure>
+<h4 id="四、HttpURLConnection写数据与发送数据"><strong>四、HttpURLConnection写数据与发送数据</strong></h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 现在通过输出流对象构建对象输出流对象，以实现输出可序列化的对象。 </span></span><br><span class="line">ObjectOutputStream objOutputStrm = <span class="keyword">new</span> ObjectOutputStream(outStrm); </span><br><span class="line"><span class="comment">// 向对象输出流写出数据，这些数据将存到内存缓冲区中 </span></span><br><span class="line">objOutputStrm.writeObject(<span class="keyword">new</span> String(<span class="string">"我是测试数据"</span>)); </span><br><span class="line"><span class="comment">// 刷新对象输出流，将任何字节都写入潜在的流中（些处为ObjectOutputStream） </span></span><br><span class="line">objOutputStm.flush(); </span><br><span class="line"><span class="comment">// 关闭流对象。此时，不能再向对象输出流写入任何数据，先前写入的数据存在于内存缓冲区中, </span></span><br><span class="line"><span class="comment">// 在调用下边的getInputStream()函数时才把准备好的http请求正式发送到服务器 </span></span><br><span class="line">objOutputStm.close(); </span><br><span class="line"><span class="comment">// 调用HttpURLConnection连接对象的getInputStream()函数, </span></span><br><span class="line"><span class="comment">// 将内存缓冲区中封装好的完整的HTTP请求电文发送到服务端。</span></span><br><span class="line"><span class="comment">// &lt;===注意，实际发送请求的代码段就在这里</span></span><br><span class="line">InputStream inStrm = httpConn.getInputStream();</span><br></pre></td></tr></table></figure>
 <h4 id="五、HttpURLConnection注意事项"><strong>五、HttpURLConnection注意事项</strong></h4><pre><code><span class="number">1</span>. HttpURLConnection的<span class="function"><span class="title">connect</span><span class="params">()</span></span>函数，实际上只是建立了一个与服务器的tcp连接，并没有实际发送http请求。无论是post还是get请求，http请求实际上直到HttpURLConnection的<span class="function"><span class="title">getInputStream</span><span class="params">()</span></span>这个函数里面才正式发送出去。所以对outputStream的写操作，必须要在inputStream的读操作之前。 
 
 <span class="number">2</span>. 在用POST方式发送URL请求时，URL请求参数的设定顺序是重中之重，对connection对象的一切配置（那一堆set函数）都必须要在<span class="function"><span class="title">connect</span><span class="params">()</span></span>函数执行之前完成。
@@ -476,10 +486,10 @@
           </div>
 
           <div class="site-state-item site-state-categories">
-            
+            <a href="/categories">
               <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">分类</span>
-              
+              </a>
           </div>
 
           <div class="site-state-item site-state-tags">

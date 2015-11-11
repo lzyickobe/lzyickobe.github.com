@@ -69,7 +69,7 @@
 <script type="text/javascript" id="hexo.configuration">
   var CONFIG = {
     scheme: 'Mist',
-    sidebar: 'post',
+    sidebar: 'always',
     motion: true
   };
 </script>
@@ -142,6 +142,16 @@
               <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
             
             首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
           </a>
         </li>
       
@@ -289,16 +299,16 @@
 </ol>
 <h2 id="Android在代码中动态设置字体颜色"><strong>Android在代码中动态设置字体颜色</strong></h2><ul>
 <li><p>取xml中的颜色来设置字体颜色像下面这样写，颜色设置是无效的。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(R.color.textColor_black);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">tv.setTextColor(R.color.textColor_black);</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>xml的颜色必须通过Color类来操作，从Resources中获取</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(<span class="keyword">this</span>.getResources().getColor(R.color.textColor_black));</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">tv.setTextColor(<span class="keyword">this</span>.getResources().getColor(R.color.textColor_black));</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>如果需要设置color的focused、pressed、selected等状态。<br>先定义一个xml文件，color文件夹下创建一个textColor_red2white.xml</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span><br><span class="line">&lt;selector xmlns:android="http://schemas.android.com/apk/res/android"&gt;</span><br><span class="line">    &lt;item android:state_pressed="true" android:color="@color/white"/&gt;</span><br><span class="line">    &lt;item android:state_pressed="false" android:color="@color/red"/&gt;</span><br><span class="line"> …</span><br><span class="line">&lt;/selector&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span><br><span class="line">&lt;selector xmlns:android="http://schemas.android.com/apk/res/android"&gt;</span><br><span class="line">    &lt;item android:state_pressed="true" android:color="@color/white"/&gt;</span><br><span class="line">    &lt;item android:state_pressed="false" android:color="@color/red"/&gt;</span><br><span class="line"> …</span><br><span class="line">&lt;/selector&gt;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>然后从Resources中获取ColorStateList才能设置成功</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(<span class="keyword">this</span>.getResources().getColorStateList(R.color. textColor_red2white));</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">tv.setTextColor(<span class="keyword">this</span>.getResources().getColorStateList(R.color. textColor_red2white));</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 <h2 id="Android动画位移后控件的位置变化"><strong>Android动画位移后控件的位置变化</strong></h2><ul>
@@ -441,10 +451,10 @@
           </div>
 
           <div class="site-state-item site-state-categories">
-            
+            <a href="/categories">
               <span class="site-state-item-count">4</span>
               <span class="site-state-item-name">分类</span>
-              
+              </a>
           </div>
 
           <div class="site-state-item site-state-tags">
