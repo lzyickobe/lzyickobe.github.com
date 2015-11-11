@@ -1,0 +1,762 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android性能优化、渲染性能," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="渲染性能意味着你可以有多快的速度绘制你的activity并让它在屏幕上刷新出来。这里的性能良好指的是你的用户感觉你的应用程序是流畅的，并且是快速响应的，这意味着你必须在16ms甚至更少的时间来完成所有的逻辑和渲染操作，但实际上这可能比你想象的要困难一些。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译]Android性能优化课程（一）：渲染性能">
+<meta property="og:url" content="http://lzyickobe.github.io/2015/01/13/Performance_1/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="渲染性能意味着你可以有多快的速度绘制你的activity并让它在屏幕上刷新出来。这里的性能良好指的是你的用户感觉你的应用程序是流畅的，并且是快速响应的，这意味着你必须在16ms甚至更少的时间来完成所有的逻辑和渲染操作，但实际上这可能比你想象的要困难一些。">
+<meta property="og:updated_time" content="2015-10-29T08:25:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[译]Android性能优化课程（一）：渲染性能">
+<meta name="twitter:description" content="渲染性能意味着你可以有多快的速度绘制你的activity并让它在屏幕上刷新出来。这里的性能良好指的是你的用户感觉你的应用程序是流畅的，并且是快速响应的，这意味着你必须在16ms甚至更少的时间来完成所有的逻辑和渲染操作，但实际上这可能比你想象的要困难一些。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> [译]Android性能优化课程（一）：渲染性能 | lzy's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                [译]Android性能优化课程（一）：渲染性能
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-01-13T18:40:00+08:00" content="Jan 13 2015">
+              Jan 13 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android性能优化/" itemprop="url" rel="index">
+                    <span itemprop="name">Android性能优化</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/01/13/Performance_1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/13/Performance_1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>渲染性能意味着你可以有多快的速度绘制你的activity并让它在屏幕上刷新出来。这里的性能良好指的是你的用户感觉你的应用程序是流畅的，并且是快速响应的，这意味着你必须在16ms甚至更少的时间来完成所有的逻辑和渲染操作，但实际上这可能比你想象的要困难一些。<br><a id="more"></a></p>
+<h2 id="内容概要"><strong>内容概要</strong></h2><p>首先说明，这篇文章来自于Google在youtube上的<a href="https://www.youtube.com/watch?v=HXQhu6qfTVU" target="_blank" rel="external">官方视频教程之一</a>，官方一共有十六个性能优化的视频，我这里会一直翻译完。如果英语不错，可以翻墙去看看youtube上的视频，那里有英文字幕，假如你翻不了墙也没事，北京GDG把这些视频已经搬运到优酷上了：<a href="http://v.youku.com/v_show/id_XODY3NjY5NDky.html?f=23330780" target="_blank" rel="external">优酷的地址</a>。</p>
+<p>这个视频中，Colt McAnlis将带我们去看看“渲染性能”对开发者意味着什么。它可以让我们开发者不掉进一些最常见的陷阱中，教我们不要忘记重要的东西：帮助我们跟踪性能的工具，并且在这些性能问题变严重之前如何解决它们。</p>
+<h2 id="视频翻译"><strong>视频翻译</strong></h2><ul>
+<li><strong>用户体验不佳</strong></li>
+</ul>
+<p>当你在构建下一个伟大的app时，你的用户却在抱怨这个软件体验不稳定。他们感觉到慢和界面的跳动，并且滑动也不像他们想象的那么平滑顺手。</p>
+<p>我的名字是 Colt McAnlis，这些抱怨听起来，你的app有一个严重的渲染性能问题。但是别担心，我们可以通过看看Android内部是如何工作的来修复这个问题。在你构建一个app时，渲染性能是最常见的性能问题。一方面，你的设计师想给用户最易用，最卓越的体验；但另一方面，这些华丽的图形和动画可能不会在每一个设备上都运行的很流畅。</p>
+<ul>
+<li><strong>渲染性能分析</strong></li>
+</ul>
+<p>让我们看看渲染性能都是些什么吧。首先，你必须了解系统每隔16ms左右重绘你的activity，这意味着你的应用程序需要在16ms的帧中运行完所有逻辑并更新到屏幕上，以达到每秒60帧的刷新速率。如果你错过了这个16ms帧窗口，假如说你花费了24ms，就产生了一个我们称之为丢弃的帧。也就是说系统在尝试屏幕上绘制一个新的画面时，而你并没有把这个画面准备好，结果用户就会在32毫秒内看到相同图形而不是16毫秒。错过帧的结果会让用户感觉这是一个慢甚至糟糕的体验。在动画中出现一个丢弃帧会在平滑的体验中看到一个跳跃，用户可以很容易看出来。当这种情况发生时，如果用户恰好正在与系统交互，那将会变得更加糟糕。比如：用户在拖动一个listview或输入一些数据的时候。这使得用户很快就开始抱怨了。</p>
+<ul>
+<li><strong>渲染性能低的原因</strong></li>
+</ul>
+<p>你错过了16毫秒的帧窗口有很多种原因，例如，你可能花了太多时间去重绘大量的视图层次（View hierarchy），这是很浪费CPU周期的。或者你可能绘制了太多的对象，在像素着色上浪费了宝贵的时间，然而这些对象对最终用户而言都是不可见的。又或者你重复一遍又一遍的在做大量的动画，这会导致CPU和GPU大量的工作。</p>
+<ul>
+<li><strong>检测和解决渲染性能问题</strong></li>
+</ul>
+<p>检测和解决这些问题很大程度上是依赖于你是如何构建app的，但一般来说，还是可以使用有效的工具来跟踪和识别是什么导致了错误。例如，你可以使用 Hierarchy Viewer来判断你的activity是否过于复杂，因为这可能导致你花费太多时间去刷新和重绘。你也可以使用设备上的工具，例如：Profile GPU Rendering, Show GPU Overdraw 和 GPU View Updates，他们可以在你遇到问题时更好的了解你的应用程序.对于那些在使用CPU时出现的渲染bug，Traceview是一个很好的工具，它能帮助你跟踪是什么导致错过一个16毫秒帧窗口。</p>
+<ul>
+<li><strong>保持冷静，keep going</strong></li>
+</ul>
+<p>渲染性能是一个很容易出现的性能问题，但是不要因为它而停止做一个amazing app。看看Android性能模式的<a href="http://i.youku.com/u/UMjczOTc0NDkzNg==/playlists" target="_blank" rel="external">其他资源</a>，不要忘记加入Google+社区哦(和谐的天朝是参与不了的，翻墙吧)。所以分析代码时请保持冷静，千万要记住，性能很重要。</p>
+<h2 id="总结"><strong>总结</strong></h2><p>不当的渲染是Android上大部分性能问题的根源。如果一个Activity需要16毫秒以上的时间来准备在屏幕上渲染下一帧，系统将放弃这一帧。应用的用户会感觉滑动不流畅，或者变换有延迟，从而导致体验不好。McAnlis推荐了很多用于检查此类问题的工具：Hierarchy Viewer、Traceview、Profile GPU Rendering、Debug GPU Overdraw和GPU View Updates。</p>
+<p>建议尽量减少失效（invalidation）和布局（layout）的数量。前者可以用Developer Option Show GPU View Updates可视化地观察，而后者可以使用Hierarchy Viewer来分析。</p>
+<h2 id="视频原文"><strong>视频原文</strong></h2><p>Rendering performance is all about how fast you can draw your activity, and get it updated on the screen. Success here means your users feeling like your application is smooth and responsive, which means that you’ve got to get all your logic completed, and all your rendering done in 16ms or less, each and every frame. But that might be a bit more difficult than you think.</p>
+<p>In this video, Colt McAnlis takes a look at what “rendering performance” means to developers, alongside some of the most common pitfalls that are ran into; and let’s not forget the important stuff: the tools that help you track down, and fix these issues before they become large problems.</p>
+<p>So you’ve built the next great mobile app,but users are complaining that the experience isn’t always consistent.They’re calling it slow and hitchy.And they say that it doesn’t scroll as smoothly as they’d like.My name is Colt McAnlis, and it sounds like your app has a serious rendering performance problem.But don’t worry. We can fix this by taking a look at how Android is working under the hood.Rendering performance is the most common performance issue that you run into while building an app. On the one hand, your designers want to produce the most usable, transcendent experience for your users. But on the other hand, all those fancy graphics and transitions may not work well on every device.</p>
+<p> So let’s take a look at what rendering performance is all about. Firstly, know that the system will attempt to redraw your activity every 16 milliseconds or so, which means that your application needs to run all the logic that updates the screen in that 16-millisecond frame in order to hit 60 frames per second. If you miss that window-let’s say you take 24 milliseconds , you start to get what we call a dropped frame. The system tried to draw a new picture on the screen, but one wasn’t ready yet. So it didn’t refresh anything. The user ends up seeing the same graphic for 32 milliseconds rather than for 16. This effect of missed frames is at the core of what a user would call a laggy or janky experience. Any animations that are going on during a dropped frame will see a jump in their smoothness, which users can easily see. It gets even worse when this effect happens while the users are interacting with the system– for example, dragging a ListView or typing in some data. This is what users quickly start to complain about.</p>
+<p>There’s a whole group of reasons that you could miss your 16-millisecond frame window. For example, you may be spending too much time redrawing large parts of your View hierarchy, which wastes CPU cycles. Or you might be drawing too many objects on top of each other, which wastes valuable time coloring in pixels that aren’t visible to the final user. Or you could be doing a ton of animation over and over and over again, which can cause large amounts of churn on both your CPU and GPU components. Detecting and fixing these problems is highly dependent on how your app is built. But generally, it comes down to using the available tools to track down and identify what’s going wrong. For example, you can use Hierarchy Viewer to understand if your activity is too complex, which can lead to issues with spending too much time invalidating or wasting time redrawing. You can also use the On-Device Tools, like Profile GPU Rendering, Show GPU Overdraw, and GPU View Updates, to get a better sense of where in your application you’re running into problems. And for those tricky rendering bugs that manifest themselves in CPU code, Traceview is a great tool to track down what’s causing a missed 16-millisecond frame.</p>
+<p>Rendering performance is one of the easiest performance problems to fall into, but don’t let that stop you from making an amazing app. Check out the rest of the Android Performance Patterns resources. And don’t forget to join our Google+ community. So keep calm, profile your code, and always remember, Perf Matters.</p>
+<h2 id="引用"><strong>引用</strong></h2><ol>
+<li><p><a href="https://www.youtube.com/watch?v=HXQhu6qfTVU" target="_blank" rel="external">Google官方Youtube视频教程(Android Performance Patterns- Rendering Performance )</a></p>
+</li>
+<li><p><a href="http://v.youku.com/v_show/id_XODY3NjY5NDky.html?f=23330780" target="_blank" rel="external">搬运至优酷的视频</a></p>
+</li>
+<li><p><a href="http://www.infoq.com/cn/news/2015/01/google-android-performance" target="_blank" rel="external">臧秀涛在InfoQ上对视频的总结翻译</a></p>
+</li>
+</ol>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android性能优化、渲染性能/" rel="tag">#Android性能优化、渲染性能</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/01/09/AndroidUninstall/" rel="next" title="Android应用监听自己是否被卸载，做反馈统计">
+                <i class="fa fa-chevron-left"></i> Android应用监听自己是否被卸载，做反馈统计
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/01/19/Performance_2/" rel="prev" title="[译]Android性能优化课程（二）：过度绘制">
+                [译]Android性能优化课程（二）：过度绘制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/01/13/Performance_1/"
+           data-title="[译]Android性能优化课程（一）：渲染性能" data-url="http://lzyickobe.github.io/2015/01/13/Performance_1/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内容概要"><span class="nav-number">1.</span> <span class="nav-text">内容概要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视频翻译"><span class="nav-number">2.</span> <span class="nav-text">视频翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视频原文"><span class="nav-number">4.</span> <span class="nav-text">视频原文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用"><span class="nav-number">5.</span> <span class="nav-text">引用</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

@@ -1,0 +1,802 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="HttupURLConnection," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="接着上一篇，我们继续来分析HttpURLConnection的使用，以及两者的共同点和区别。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HttpClient和HttpURLConnection的使用和区别（下）">
+<meta property="og:url" content="http://lzyickobe.github.io/2014/09/18/HttpClient&UrlConnection_2/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="接着上一篇，我们继续来分析HttpURLConnection的使用，以及两者的共同点和区别。">
+<meta property="og:updated_time" content="2015-11-11T07:05:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="HttpClient和HttpURLConnection的使用和区别（下）">
+<meta name="twitter:description" content="接着上一篇，我们继续来分析HttpURLConnection的使用，以及两者的共同点和区别。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> HttpClient和HttpURLConnection的使用和区别（下） | lzy's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                HttpClient和HttpURLConnection的使用和区别（下）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-18T12:01:36+08:00" content="Sep 18 2014">
+              Sep 18 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/18/HttpClient&UrlConnection_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/18/HttpClient&UrlConnection_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>接着上一篇，我们继续来分析HttpURLConnection的使用，以及两者的共同点和区别。<br><a id="more"></a></p>
+<h2 id="用法"><strong>用法</strong></h2><hr>
+<h3 id="HttpURLConnection的用法"><strong>HttpURLConnection的用法</strong></h3><h4 id="一、创建HttpURLConnection对象"><strong>一、创建HttpURLConnection对象</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">URL url = <span class="keyword">new</span> URL(<span class="string">"http://localhost:8080/TestHttpURLConnectionPro/index.jsp"</span>); </span><br><span class="line">URLConnection urlConnection = url.openConnection();</span><br><span class="line">HttpURLConnection httpUrlConnection = (HttpURLConnection) urlConnection;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>这个创建方法大家应该都很熟悉了，可能会认为下文中使用的HttpURLConnection的API的实现就在HttpURLConnection中了。这里要注意一下，其实这个HttpURLConnection是一个抽象类。</p>
+</li>
+<li><p>也就是说里面很多API函数都不在这儿实现的，那在哪实现呢。翻开java源码，可以看到，URL.openConnection()的实现是在java.net.URL类中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//java.net.URL类里面的openConnection方法：  </span></span><br><span class="line"><span class="function"><span class="keyword">public</span> URLConnection <span class="title">openConnection</span><span class="params">(Proxy proxy)</span></span>&#123;  </span><br><span class="line">   …  </span><br><span class="line">   <span class="keyword">return</span> handler.openConnection(<span class="keyword">this</span>, proxy); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这里的handler又是什么呢，跟进去，发现Handler是sun.net.www.protocol.http.Handler这个java类，继承java.net.URLStreamHandler类，是用来处理http连接请求响应的。 继续跟踪代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Handler的方法</span></span><br><span class="line"><span class="keyword">protected</span> java.net.<span class="function">URLConnection <span class="title">openConnection</span><span class="params">(URL u, Proxy p)</span> <span class="keyword">throws</span> IOException </span>&#123;  </span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> HttpURLConnection(u, p, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最终发现只是简单的生成了HttpURLConnection对象，其实最重要的HttpURLConnection就在这里了，这个是sun.net.www.protocl.http.HttpURLConnection类的对象，继承java.net.HttpURLConnection。也就是说我们之后所用的API实现都在sun.net.www.protocl.http.HttpURLConnection这个类里面。所以大家想要看HttpURLConnection的源码实现的话，需要到这个类中去查看。</p>
+<p>  好了，说了这么多，下面还是介绍HttpURLConnection常用的API的使用吧。</p>
+</li>
+</ul>
+<h4 id="二、HttpURLConnection参数设置"><strong>二、HttpURLConnection参数设置</strong></h4><p>1、设置是否向httpUrlConnection输出，默认情况下是false。使用httpUrlConnection.getOutputStream()，把内容输出到远程服务器上。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setDoOutput(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
+<p>2、设置是否从httpUrlConnection读入，默认情况下是true。使用httpUrlConnection.getInputStream()，从远程服务器上得到响应的内容。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setDoInput(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
+<p>3、是否使用缓存。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setUseCaches(<span class="keyword">false</span>);</span><br></pre></td></tr></table></figure></p>
+<p>4、设定传送的内容类型是可序列化的java对象 (如果不设此项,在传送序列化对象时,当WEB服务默认的不是这种类型时可能抛java.io.EOFException)。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setRequestProperty(<span class="string">"Content-type"</span>, <span class="string">"application/x-java-serialized-object"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>5、设定请求的方法为”POST”，默认是GET 。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.setRequestMethod(<span class="string">"POST"</span>);</span><br></pre></td></tr></table></figure></p>
+<h4 id="三、HttpURLConnection连接"><strong>三、HttpURLConnection连接</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">httpUrlConnection.connect(); </span><br><span class="line"><span class="comment">//此处getOutputStream会隐含的进行connect,所以在开发中不调用上述的connect()也可以</span></span><br><span class="line">OutputStream outStrm = httpUrlConnection.getOutputStream();</span><br></pre></td></tr></table></figure>
+<h4 id="四、HttpURLConnection写数据与发送数据"><strong>四、HttpURLConnection写数据与发送数据</strong></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 现在通过输出流对象构建对象输出流对象，以实现输出可序列化的对象。 </span></span><br><span class="line">ObjectOutputStream objOutputStrm = <span class="keyword">new</span> ObjectOutputStream(outStrm); </span><br><span class="line"><span class="comment">// 向对象输出流写出数据，这些数据将存到内存缓冲区中 </span></span><br><span class="line">objOutputStrm.writeObject(<span class="keyword">new</span> String(<span class="string">"我是测试数据"</span>)); </span><br><span class="line"><span class="comment">// 刷新对象输出流，将任何字节都写入潜在的流中（些处为ObjectOutputStream） </span></span><br><span class="line">objOutputStm.flush(); </span><br><span class="line"><span class="comment">// 关闭流对象。此时，不能再向对象输出流写入任何数据，先前写入的数据存在于内存缓冲区中, </span></span><br><span class="line"><span class="comment">// 在调用下边的getInputStream()函数时才把准备好的http请求正式发送到服务器 </span></span><br><span class="line">objOutputStm.close(); </span><br><span class="line"><span class="comment">// 调用HttpURLConnection连接对象的getInputStream()函数, </span></span><br><span class="line"><span class="comment">// 将内存缓冲区中封装好的完整的HTTP请求电文发送到服务端。</span></span><br><span class="line"><span class="comment">// &lt;===注意，实际发送请求的代码段就在这里</span></span><br><span class="line">InputStream inStrm = httpConn.getInputStream();</span><br></pre></td></tr></table></figure>
+<h4 id="五、HttpURLConnection注意事项"><strong>五、HttpURLConnection注意事项</strong></h4><pre><code><span class="number">1</span>. HttpURLConnection的<span class="function"><span class="title">connect</span><span class="params">()</span></span>函数，实际上只是建立了一个与服务器的tcp连接，并没有实际发送http请求。无论是post还是get请求，http请求实际上直到HttpURLConnection的<span class="function"><span class="title">getInputStream</span><span class="params">()</span></span>这个函数里面才正式发送出去。所以对outputStream的写操作，必须要在inputStream的读操作之前。 
+
+<span class="number">2</span>. 在用POST方式发送URL请求时，URL请求参数的设定顺序是重中之重，对connection对象的一切配置（那一堆set函数）都必须要在<span class="function"><span class="title">connect</span><span class="params">()</span></span>函数执行之前完成。
+</code></pre><h2 id="区别"><strong>区别</strong></h2><hr>
+<ul>
+<li><p><strong>功能用法对比</strong></p>
+<ul>
+<li><p>从功能上对比，HttpClient库要丰富很多，提供了很多工具，封装了http的请求头，参数，内容体，响应，还有一些高级功能，代理、COOKIE、鉴权、压缩、连接池的处理。</p>
+</li>
+<li><p>HttpClient高级功能代码写起来比较复杂，对开发人员的要求会高一些，而HttpURLConnection对大部分工作进行了包装，屏蔽了不需要的细节，适合开发人员直接调用。</p>
+</li>
+<li><p>另外，HttpURLConnection在2.3版本增加了一些HTTPS方面的改进，4.0版本增加一些响应的缓存。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>性能对比</strong></p>
+<ul>
+<li><p>HttpUrlConnection直接支持GZIP压缩；HttpClient也支持，但要自己写代码处理。</p>
+</li>
+<li><p>HttpUrlConnection直接支持系统级连接池，即打开的连接不会直接关闭，在一段时间内所有程序可共用；HttpClient当然也能做到，但毕竟不如官方直接系统底层支持好。</p>
+</li>
+<li><p>HttpUrlConnection直接在系统层面做了缓存策略处理（4.0版本以上），加快了重复请求的速度。</p>
+</li>
+<li><p><a href="http://wj98127.iteye.com/blog/617014" target="_blank" rel="external">这篇文章</a>对两者的速度做了一个对比，做法是两个类都使用默认的方法去请求百度的网页内容，测试结果是使用httpurlconnection耗时47ms，使用httpclient耗时641ms。httpURLConnection在速度有比较明显的优势，当然这跟压缩内容和缓存都有直接关系。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>未来发展</strong></p>
+<ul>
+<li><p>HttpClient 适用于 web browsers, 他们是可扩展的，并且拥有大量的稳定APIs。但是，在不破坏其兼容性的前提下很难对如此多的APIs做修改。因此，Android 团队对修改优化Apache HTTP Client表现的并不积极。</p>
+</li>
+<li><p>HttpURLConnect 是一个通用的、适合大多数应用的轻量级组件。这个类起步比较晚，很容易在主要API上做稳步的改善。但是HttpURLConnection在在Android 2.2及以下版本上存在一些令人厌烦的bug，尤其是在读取 InputStream时调用 close()方法，就有可能会导致连接池失效了。</p>
+</li>
+<li><p>Android团队未来的工作会将更多的时间放在优化HttpURLConnection上，它的API简单，体积较小，因而非常适用于Android项目。压缩和缓存机制可以有效地减少网络访问的流量，在提升速度和省电方面也起到了较大的作用。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>选用建议</strong></p>
+<ul>
+<li><p>如果一个Android应用需要向指定页面发送请求，但该页面并不是一个简单的页面，只有当用户已经登录，而且登录用户的用户名有效时才可访问该页面。如果使用HttpURLConnection来访问这个被保护的页面，那么需要处理的细节就太复杂了。这种情况建议使用HttpClient。</p>
+</li>
+<li><p>Android2.3及以上版本建议选用HttpURLConnection，2.2及以下版本建议选用HttpClient。新的应用都建议使用HttpURLConnection。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="引用资料"><strong>引用资料</strong></h2><hr>
+<ol>
+<li><p><a href="http://tingshuokan.com/?p=66" target="_blank" rel="external">HTTP和SOCKET连接区别</a></p>
+</li>
+<li><p><a href="http://www.blogjava.net/stevenjohn/archive/2012/09/26/388603.html" target="_blank" rel="external">HttpClient 教程</a></p>
+</li>
+<li><p><a href="http://blog.csdn.net/hguang_zjh/article/details/33743249" target="_blank" rel="external">HttpClient和HttpURLConnection的区别</a></p>
+</li>
+<li><p><a href="http://wj98127.iteye.com/blog/617014" target="_blank" rel="external">HttpURLConnection VS HttpClient性能测试</a></p>
+</li>
+</ol>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/HttupURLConnection/" rel="tag">#HttupURLConnection</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/09/12/HttpClient&UrlConnection_1/" rel="next" title="HttpClient和HttpURLConnection的使用和区别（上）">
+                <i class="fa fa-chevron-left"></i> HttpClient和HttpURLConnection的使用和区别（上）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/09/24/GoogleVolley_1/" rel="prev" title="Google官方网络开源库Volley的分析和使用（一、框架分析篇）">
+                Google官方网络开源库Volley的分析和使用（一、框架分析篇） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2014/09/18/HttpClient&UrlConnection_2/"
+           data-title="HttpClient和HttpURLConnection的使用和区别（下）" data-url="http://lzyickobe.github.io/2014/09/18/HttpClient&UrlConnection_2/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#用法"><span class="nav-number">1.</span> <span class="nav-text">用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HttpURLConnection的用法"><span class="nav-number">1.1.</span> <span class="nav-text">HttpURLConnection的用法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、创建HttpURLConnection对象"><span class="nav-number">1.1.1.</span> <span class="nav-text">一、创建HttpURLConnection对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、HttpURLConnection参数设置"><span class="nav-number">1.1.2.</span> <span class="nav-text">二、HttpURLConnection参数设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、HttpURLConnection连接"><span class="nav-number">1.1.3.</span> <span class="nav-text">三、HttpURLConnection连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、HttpURLConnection写数据与发送数据"><span class="nav-number">1.1.4.</span> <span class="nav-text">四、HttpURLConnection写数据与发送数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#五、HttpURLConnection注意事项"><span class="nav-number">1.1.5.</span> <span class="nav-text">五、HttpURLConnection注意事项</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#区别"><span class="nav-number">2.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用资料"><span class="nav-number">3.</span> <span class="nav-text">引用资料</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

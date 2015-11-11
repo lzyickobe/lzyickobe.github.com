@@ -1,0 +1,767 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="坑," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="随手记录编程的那些坑（二）:Android应用编程中的小坑">
+<meta property="og:url" content="http://lzyickobe.github.io/2014/10/21/ken_2/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化">
+<meta property="og:updated_time" content="2015-11-11T07:10:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="随手记录编程的那些坑（二）:Android应用编程中的小坑">
+<meta name="twitter:description" content="本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> 随手记录编程的那些坑（二）:Android应用编程中的小坑 | lzy's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                随手记录编程的那些坑（二）:Android应用编程中的小坑
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-10-21T12:07:17+08:00" content="Oct 21 2014">
+              Oct 21 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/编程-踩过的那些坑/" itemprop="url" rel="index">
+                    <span itemprop="name">编程-踩过的那些坑</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/10/21/ken_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/10/21/ken_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化<br><a id="more"></a></p>
+<h2 id="重叠控件的事件响应"><strong>重叠控件的事件响应</strong></h2><p>在FrameLayout或Relativelayout中有两个view，这两个view重叠堆放，view1在上，view2在下。view1是有几个button的LinearLayout，view2是一个listview。点击事件的处理有以下几种情况：</p>
+<ol>
+<li><p>如果只给view1的button设置了点击事件，底下view2的listview和view1的button相交区域是接收不到点击事件的，在非相交区域view2的list控件是可以接收到点击事件的。 原因是在view1的button和view2的listview相交区域的点击事件会首先传到上层的view1，view1的button把点击事件消费了，就不会继续传给底下的view2了。</p>
+</li>
+<li><p>如果在view1和view1的button都设置了点击事件，view1的button会接收到touch事件，而view2的任何区域都将接收不到点击事件。原因是touch事件是这样传递的，从父容器到view1，view1再传给view1的button。由于view1设置了点击事件，等于view1拦截了touch事件，就不会在传给view2了。如果点击的区域在button上，则会响应button的点击事件，不会响应view1的点击事件；如果不在button上，才会被view1的点击事件处理。</p>
+</li>
+<li><p>view1和view2的父容器，也就是FrameLayout、Relativelayout，这两个是ViewGroup的子类。他们有onInterceptTouchEvent()这个方法可以拦截Touch事件，一旦他们复写了onInterceptTouchEvent()，并return true。点击事件就不会再传给view1和view2了。</p>
+</li>
+</ol>
+<p>这里写的自己都比较晕，Android事件传递机制必须理解的全面，如果是片面的理解，在项目中很可能就不懂为什么会这样。我推荐两篇事件传递的博文：<a href="http://blog.csdn.net/morgan_xww/article/details/9372285" target="_blank" rel="external">小威的专栏</a>和<a href="http://blog.csdn.net/hyp712/article/details/8777835" target="_blank" rel="external">hyp712的专栏</a>。Touch事件传递机制真的很重要，有空的话，我自己也会写一篇TouchEvent的专题。</p>
+<h2 id="Java时间戳和unix时间戳"><strong>Java时间戳和unix时间戳</strong></h2><p>一句话解释： Java时间戳是long型的，精确到毫秒；unix时间戳是int型，精确到秒；unix转换成java时间戳的时候需要 * 1000。</p>
+<h2 id="MediaPlayer的create()和prepare()"><strong>MediaPlayer的create()和prepare()</strong></h2><p>使用MediaPlayer的时候很容易出现一个错误：prepareAsync called in state 8. 一般出现这种问题很可能是同时调用了create()和prepare()方法，删除调用prepare()的代码就可以解决。原因是Android在create()方法里面调用过mp.prepare()方法，你手动再次调用就会发生异常。</p>
+<h2 id="listview复用item注意事项"><strong>listview复用item注意事项</strong></h2><ol>
+<li><p>在listview的getView()方法中，如果给item中的某一个控件赋值需要用if条件判断的话，记得必须把else写全。因为listview会复用item，复用的item会把上一个状态保存下来，如果不把else写全，当前的item就不会被重新赋值了。</p>
+</li>
+<li><p>在getView()中，使用getTag和setTag可以优化一些性能，比如说给imageview设置tag，会把imageview缓存起来，方便多次重用，也可以通知getTag()知道当前的imageview属于哪一个item。</p>
+</li>
+</ol>
+<h2 id="Android在代码中动态设置字体颜色"><strong>Android在代码中动态设置字体颜色</strong></h2><ul>
+<li><p>取xml中的颜色来设置字体颜色像下面这样写，颜色设置是无效的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(R.color.textColor_black);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>xml的颜色必须通过Color类来操作，从Resources中获取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(<span class="keyword">this</span>.getResources().getColor(R.color.textColor_black));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果需要设置color的focused、pressed、selected等状态。<br>先定义一个xml文件，color文件夹下创建一个textColor_red2white.xml</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span><br><span class="line">&lt;selector xmlns:android="http://schemas.android.com/apk/res/android"&gt;</span><br><span class="line">    &lt;item android:state_pressed="true" android:color="@color/white"/&gt;</span><br><span class="line">    &lt;item android:state_pressed="false" android:color="@color/red"/&gt;</span><br><span class="line"> …</span><br><span class="line">&lt;/selector&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后从Resources中获取ColorStateList才能设置成功</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tv.setTextColor(<span class="keyword">this</span>.getResources().getColorStateList(R.color. textColor_red2white));</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Android动画位移后控件的位置变化"><strong>Android动画位移后控件的位置变化</strong></h2><ul>
+<li><strong>问题描述</strong></li>
+</ul>
+<p>初始位置是 0,你要运动到 300，那么你可以new TranslateAnimation(0, 300, 0, 0);来获得位移动画,但是移动后,它会闪回0位置,因为控件实际坐标还是0 (你可以用getX()来测试一下)。</p>
+<ul>
+<li><strong>原因分析</strong></li>
+</ul>
+<p>Android动画的API设计就是这样的，动画移动并不会移动真正的控件的位置，控件的位置还在原来的地方。</p>
+<ul>
+<li><strong>解决方法</strong></li>
+</ul>
+<p>先移位,再做位置变换。先把控件隐藏，把位置设置在300，然后显示。这时候你用new TranslateAnimation(0, 300, 0, 0),就会从300移动到600再弹回来,这效果肯定不行。只需要做个反向offset,new TranslateAnimation(-300, 0, 0, 0),那么就从0,运动到300，最后停留在300这个位置了。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/坑/" rel="tag">#坑</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/10/16/ken_1/" rel="next" title="随手记录编程的那些坑（一）:Java对象问题">
+                <i class="fa fa-chevron-left"></i> 随手记录编程的那些坑（一）:Java对象问题
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/10/30/OKHttp_1/" rel="prev" title="Square开源库OkHttp的分析和使用（一）">
+                Square开源库OkHttp的分析和使用（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2014/10/21/ken_2/"
+           data-title="随手记录编程的那些坑（二）:Android应用编程中的小坑" data-url="http://lzyickobe.github.io/2014/10/21/ken_2/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#重叠控件的事件响应"><span class="nav-number">1.</span> <span class="nav-text">重叠控件的事件响应</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java时间戳和unix时间戳"><span class="nav-number">2.</span> <span class="nav-text">Java时间戳和unix时间戳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MediaPlayer的create()和prepare()"><span class="nav-number">3.</span> <span class="nav-text">MediaPlayer的create()和prepare()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#listview复用item注意事项"><span class="nav-number">4.</span> <span class="nav-text">listview复用item注意事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android在代码中动态设置字体颜色"><span class="nav-number">5.</span> <span class="nav-text">Android在代码中动态设置字体颜色</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android动画位移后控件的位置变化"><span class="nav-number">6.</span> <span class="nav-text">Android动画位移后控件的位置变化</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

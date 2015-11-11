@@ -1,0 +1,774 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Volley," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="这两天把Volley的源码过了一遍，在这里分享一下对部分Volley源码的理解。本文主要分析了Volley.java、RequestQueue.java、Request.java、CacheDispatcher.java、NetworkDispatcher.java。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google官方网络开源库Volley的分析和使用（二、源码分析篇）">
+<meta property="og:url" content="http://lzyickobe.github.io/2014/09/24/GoogleVolley_2/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="这两天把Volley的源码过了一遍，在这里分享一下对部分Volley源码的理解。本文主要分析了Volley.java、RequestQueue.java、Request.java、CacheDispatcher.java、NetworkDispatcher.java。">
+<meta property="og:updated_time" content="2015-11-11T07:03:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google官方网络开源库Volley的分析和使用（二、源码分析篇）">
+<meta name="twitter:description" content="这两天把Volley的源码过了一遍，在这里分享一下对部分Volley源码的理解。本文主要分析了Volley.java、RequestQueue.java、Request.java、CacheDispatcher.java、NetworkDispatcher.java。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Google官方网络开源库Volley的分析和使用（二、源码分析篇） | lzy's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Google官方网络开源库Volley的分析和使用（二、源码分析篇）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-24T16:02:07+08:00" content="Sep 24 2014">
+              Sep 24 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/24/GoogleVolley_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/24/GoogleVolley_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>这两天把Volley的源码过了一遍，在这里分享一下对部分Volley源码的理解。本文主要分析了Volley.java、RequestQueue.java、Request.java、CacheDispatcher.java、NetworkDispatcher.java。<br><a id="more"></a></p>
+<h2 id="Volley管家-Volley-java"><strong>Volley管家-Volley.java</strong></h2><hr>
+<p>在前面一篇文章中，我们使用Volley的第一步都是调用Volley.newRequestQueue(context)方法来获得一个RequestQueue的对象。</p>
+<h5 id="一、应该保存多少个RequestQueue对象"><strong>一、应该保存多少个RequestQueue对象</strong></h5><p>是不是在每次网络请求都需要生成一个RequestQueue对象，还是在每个activity中只保留一个RequestQueue对象，又或是在一个Application中只保留一个RequestQueue对象就够用了呢。我在网上查看了相关说法，也对应源码理解了一下。这个RequestQueue对象是一个比较重量级的类，里面保存了请求的集合，1个缓存派发线程，默认4个网络派发线程。一般来说，一个RequestQueue对象足以处理一般的多个网络请求了，没有必要创建多个RequestQueue对象来做。所以我个人倾向于一个Application中只保留一个RequestQueue对象，可以用单例模式或继承Application时调用这个方法初始化。</p>
+<h5 id="二、下面来解释一下Volley-java的代码"><strong>二、下面来解释一下Volley.java的代码</strong></h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestQueue <span class="title">newRequestQueue</span><span class="params">(Context context, HttpStack stack)</span> </span>&#123;</span><br><span class="line">	File cacheDir = <span class="keyword">new</span> File(context.getCacheDir(), DEFAULT_CACHE_DIR);</span><br><span class="line">	<span class="comment">//UserAgent用来封装应用的包名跟版本号，放在请求的头部，提供给服务器  </span></span><br><span class="line">	String userAgent = <span class="string">"volley/0"</span>;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">         String packageName = context.getPackageName();</span><br><span class="line">         PackageInfo info = context.getPackageManager().getPackageInfo(packageName, <span class="number">0</span>);</span><br><span class="line">         userAgent = packageName + <span class="string">"/"</span> + info.versionCode;</span><br><span class="line">     	&#125; <span class="keyword">catch</span> (NameNotFoundException e) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//一般我们调用另外一个构造函数，这个参数都传null，volley会判断sdk版本选择HttpClient还是HttpURLConnection。</span></span><br><span class="line">    <span class="keyword">if</span> (stack == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="number">9</span>) &#123;</span><br><span class="line">           stack = <span class="keyword">new</span> HurlStack();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// Prior to Gingerbread, HttpUrlConnection was unreliable.</span></span><br><span class="line">            <span class="comment">// See: http://android-developers.blogspot.com/2011/09/androids-http-clients.html</span></span><br><span class="line">            stack = <span class="keyword">new</span> HttpClientStack(AndroidHttpClient.newInstance(userAgent));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//创建一个Network对象，network里面会调用stack去跟网络通信</span></span><br><span class="line">    Network network = <span class="keyword">new</span> BasicNetwork(stack);</span><br><span class="line">	<span class="comment">//创建RequestQueue，并将缓存实现DiskBasedCache和网络实现BasicNetwork传进去</span></span><br><span class="line">	<span class="comment">//cache路径：/data/data/&lt;pakge name&gt;/cache/&lt;name&gt;  </span></span><br><span class="line">    RequestQueue queue = <span class="keyword">new</span> RequestQueue(<span class="keyword">new</span> DiskBasedCache(cacheDir), network);</span><br><span class="line">	<span class="comment">//然后调用start方法</span></span><br><span class="line">    queue.start();</span><br><span class="line">    <span class="keyword">return</span> queue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至于为什么Volley的网络请求大于等于2.3的版本使用HttpURLConnection，小于2.3的版本使用HttpClient。原因在前面的<a href="http://lzyblog.com/2014/09/18/HttpClient%E5%92%8CHttpURLConnection%E7%9A%84%E4%BD%BF%E7%94%A8%E5%92%8C%E5%8C%BA%E5%88%AB-%E4%B8%8B/#区别" target="_blank" rel="external">博文</a>中说明过。</p>
+<h2 id="请求队列类-RequestQueue-java"><strong>请求队列类-RequestQueue.java</strong></h2><hr>
+<h5 id="一、内部变量"><strong>一、内部变量</strong></h5><p>RequestQueue类有2个非常重要的PriorityBlockingQueue类型的成员字段mCacheQueue和mNetworkQueue，该PriorityBlockingQueue为java1.5并发库提供的新类。</p>
+<p>其中有几个重要的方法，比如take()为从队列中取得对象，如果队列不存在对象，将会被阻塞，直到队列中存在有对象。</p>
+<h5 id="二、构造函数"><strong>二、构造函数</strong></h5><p>Cache是缓存处理，Network是网络处理，这两个参数是从Volley类中传入的。threadPoolSize，默认网络线程池的数量是4个。ResponseDelivery是一个接口，具体实现类是ExecutorDelivery，作用是使用Handler将Response传回给主线程。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">RequestQueue</span><span class="params">(Cache cache, Network network, <span class="keyword">int</span> threadPoolSize,  </span><br><span class="line">        ResponseDelivery delivery)</span> </span>&#123;  </span><br><span class="line">    mCache = cache;<span class="comment">//缓存  </span></span><br><span class="line">    mNetwork = network;<span class="comment">//网络  </span></span><br><span class="line">    mDispatchers = <span class="keyword">new</span> NetworkDispatcher[threadPoolSize];<span class="comment">//线程池  </span></span><br><span class="line">    mDelivery = delivery;<span class="comment">//派送Response的实现  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="三、启动线程"><strong>三、启动线程</strong></h5><p>启动线程第一步是把所有线程停止了，接着创建一个缓存线程，并启动，在这里，会将 mCacheQueue，mNetwrok, mCache 和 mDelivery 传给其构造函数。最后，根据线程池的大小，创建相对应数目的网络线程，并启动。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 保证所有正在运行的Dispatcher（也就是线程）都停止  </span></span><br><span class="line">    stop();</span><br><span class="line">    <span class="comment">// 创建缓存的派发器（也是一个线程），并启动线程。  </span></span><br><span class="line">    mCacheDispatcher = <span class="keyword">new</span> CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);  </span><br><span class="line">    mCacheDispatcher.start();  </span><br><span class="line">    <span class="comment">// 根据线程池的大小，创建相对应的NetworkDispatcher（线程），并启动所有的线程。  </span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mDispatchers.length; i++) &#123;  </span><br><span class="line">        NetworkDispatcher networkDispatcher = <span class="keyword">new</span> NetworkDispatcher(mNetworkQueue, mNetwork, mCache, mDelivery);  </span><br><span class="line">        mDispatchers[i] = networkDispatcher;  </span><br><span class="line">        networkDispatcher.start();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="四、添加请求"><strong>四、添加请求</strong></h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> &lt;T&gt; <span class="function">Request&lt;T&gt; <span class="title">add</span><span class="params">(Request&lt;T&gt; request)</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 将请求标记属于这个队列</span></span><br><span class="line">	request.setRequestQueue(<span class="keyword">this</span>);</span><br><span class="line">	<span class="comment">//将请求添加到mCurrentRequests中，表明是正在处理中的，利用synchronized来同步</span></span><br><span class="line">	<span class="keyword">synchronized</span> (mCurrentRequests) &#123;</span><br><span class="line">		mCurrentRequests.add(request);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 在这里会设置序列号，保证每个请求都是按顺序被处理的。</span></span><br><span class="line">	request.setSequence(getSequenceNumber());</span><br><span class="line">	request.addMarker(<span class="string">"add-to-queue"</span>);</span><br><span class="line">	<span class="comment">// 如果这个请求是设置不缓存的，跳过缓存队列，添加到网络队列中，直接去网络中获取数据</span></span><br><span class="line">	<span class="keyword">if</span> (!request.shouldCache()) &#123;</span><br><span class="line">		mNetworkQueue.add(request);</span><br><span class="line">		<span class="keyword">return</span> request;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 到这里，表明这个请求可以去先去缓存中获取数据。</span></span><br><span class="line">	<span class="keyword">synchronized</span> (mWaitingRequests) &#123;</span><br><span class="line">		String cacheKey = request.getCacheKey();</span><br><span class="line">		<span class="keyword">if</span> (mWaitingRequests.containsKey(cacheKey)) &#123;</span><br><span class="line">			<span class="comment">// 由于一个key(默认url作为key)，会存在多个请求，这样就形成一个请求队列了</span></span><br><span class="line">			<span class="comment">// 一个等待队列(mWaitingRequests)中可以拥有很多个请求队列，用key来作为一个请求队列的唯一标识</span></span><br><span class="line">			<span class="comment">// 等待队列中已经有这个key的请求队列了，说明这个key的请求队列有请求正在执行中。需要排队...</span></span><br><span class="line">			<span class="comment">// 把这个请求加入到请求队列中，等排在前面的请求处理完毕，就会执行这个请求了，代码在finish()方法中，可自行查看</span></span><br><span class="line">			Queue&lt;Request&lt;?&gt;&gt; stagedRequests = mWaitingRequests.get(cacheKey);</span><br><span class="line">			<span class="keyword">if</span> (stagedRequests == <span class="keyword">null</span>) &#123;</span><br><span class="line">				stagedRequests = <span class="keyword">new</span> LinkedList&lt;Request&lt;?&gt;&gt;();</span><br><span class="line">			&#125;</span><br><span class="line">			stagedRquests.add(requeset);</span><br><span class="line">			mWaitingRequests.put(cacheKey, stagedRequests);</span><br><span class="line">			<span class="keyword">if</span> (VolleyLog.DEBUG) &#123;</span><br><span class="line">				VolleyLog.v(<span class="string">"Request for cacheKey=%s is in flight, putting on hold."</span>, cacheKey);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// 如果mWaitingRequest中没有这个key的请求队列，插入一个null到等待队列中，说明这个请求不需要等待。</span></span><br><span class="line">			mWaitingRequests.put(cacheKey, <span class="keyword">null</span>);</span><br><span class="line">			<span class="comment">// 加入缓存队列，这个请求就开始处理了。</span></span><br><span class="line">			mCacheQueue.add(request);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> request;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="请求类-Request-java"><strong>请求类-Request.java</strong></h2><hr>
+<h5 id="一、Request是一个抽象类"><strong>一、Request是一个抽象类</strong></h5><p>Request类也是一个很重要的抽象类，如果你需要扩展返回不同数据类型，就需要继承Request类，我的下一篇文章有详细介绍。</p>
+<h5 id="二、Request的抽象方法"><strong>二、Request的抽象方法</strong></h5><p>这里先简单介绍一下，作为Request的子类，必须实现两个抽象方法：parseNetworkRespone(NetworkResponse response)、deliverResponse(T response)。这两个方法，第一个方法是把返回的序列化数据加工成我们想要的类型，Volley官方已经实现String、Image和Json类型，你可以根据自己的需求扩展；第二个方法首先要保证参数response不是null，然后将正确的response通过Response.Listener接口回调出去。</p>
+<h5 id="三、post请求的注意事项"><strong>三、post请求的注意事项</strong></h5><p>其他重要的一些方法：getUrl()是返回的 url地址，getBody()是返回的请求的实体，这两个方法是在http的网络请求中肯定要用到的。这里有一个注意的地方：系统自带的StringRequest、ImageRequest、JsonObjectRequest都没有提供设置Post参数的地方，当发post请求,Volley会尝试调用父类Request的getParams()方法来获得Post参数，如果大家想用post请求并使用系统自带Request的话，请在子类Request的匿名类中复写getParams()方法设置参数。例如：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">StringRequest stringRequest = <span class="keyword">new</span> StringRequest(Method.POST, url,  listener, errorListener) &#123;  </span><br><span class="line">    <span class="annotation">@Override</span>  </span><br><span class="line">    <span class="keyword">protected</span> Map&lt;String, String&gt; getParams() <span class="keyword">throws</span> AuthFailureError &#123;  </span><br><span class="line">        Map&lt;String, String&gt; map = <span class="keyword">new</span> HashMap&lt;String, String&gt;();  </span><br><span class="line">        map.put(<span class="string">"params1"</span>, <span class="string">"value1"</span>);  </span><br><span class="line">        map.put(<span class="string">"params2"</span>, <span class="string">"value2"</span>);  </span><br><span class="line">        <span class="keyword">return</span> map;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>当然，你要直接复写getBody()方法，也没什么问题。 我建议在扩展自己的Request时候，最好能写一个setParam()设置Post参数的方法，然后复写getParam()方法得到设置的Param。这样对于使用来说，会更加方便。</p>
+<h2 id="缓存调度线程-CacheDispatcher-java"><strong>缓存调度线程-CacheDispatcher.java</strong></h2><hr>
+<h5 id="一、加入缓存调度队列"><strong>一、加入缓存调度队列</strong></h5><p>在RequestQueue中有两处把请求加入缓存调度队列的，一个是在add()方法里，一个是在finish()方法里。add()方法是查询到当前没有这个key(默认url)的请求队列了，直接就加入缓存调度队列。finish()方法是查询到当前key的一个请求执行完毕了，然后把这个key的其他请求都加入到缓存调度队列中，排队执行。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// add()方法</span></span><br><span class="line"><span class="comment">// Insert 'null' queue for this cacheKey, indicating there is now a request in flight.</span></span><br><span class="line">mWaitingRequests.put(cacheKey, <span class="keyword">null</span>);</span><br><span class="line">mCacheQueue.add(request);</span><br><span class="line"><span class="comment">// finish() 方法</span></span><br><span class="line"><span class="comment">// Process all queued up requests. They won't be considered as in flight, but</span></span><br><span class="line"><span class="comment">// that's not a problem as the cache has been primed by 'request'.</span></span><br><span class="line">mCacheQueue.addAll(waitingRequests);</span><br></pre></td></tr></table></figure></p>
+<h5 id="二、缓存调度线程的run()方法"><strong>二、缓存调度线程的run()方法</strong></h5><p>run()的代码理解起来不难，我就不贴代码了，可以自己下源码看看。这里简单说说run方法的执行流程：</p>
+<ol>
+<li><p>初始化缓存</p>
+</li>
+<li><p>开始while(true)的死循环，调用 mCacheQueue的take方法，来获得一个请求，而mCacheQueue是一个BlockingQueue，也就是说，当队列中没有请求的时候，take方法就会一直阻塞在这里，等待队列中的请求，而一旦队列中有新的请求进来了，那么它就会马上执行下去。</p>
+</li>
+<li><p>判断请求是否已经取消，如果已经被取消了，则不需要再往下执行，重新等待下一个请求。</p>
+</li>
+<li><p>根据请求的CacheKey去缓存中寻找相对应的记录，如果找不到对应的记录，或者对应的记录过期了，则将其放到NetworkQueue队列中。</p>
+</li>
+<li><p>缓存中存在相对应的记录，那么调用每个请求具体的实现方法parseNetworkResponse函数，根据具体的请求去解析得到对应的响应Response对象。</p>
+</li>
+<li><p>获得Response对象之后，还会再进行判断这个请求是不是需要进行一次网络的更新，根据记录的soft-ttl （time-to-live）来判断，这个值是通过服务器传回来的Response的Header信息的CacheControl属性设置的。需要更新，将其放到NetworkQueue队列中。不需要更新，直接将结果调用mDelivery传回主线程。</p>
+</li>
+</ol>
+<h2 id="网络调度线程-NetworkDispatcher-java"><strong>网络调度线程-NetworkDispatcher.java</strong></h2><hr>
+<p>这一块的代码也不复杂，讲一下run()的流程吧，这里也是一个while(true)的死循环：</p>
+<ol>
+<li><p>调用 mQueue的take（）方法从队列中获取请求，如果没有请求，则一直阻塞在那里等待，直到队列中有新的请求到来。</p>
+</li>
+<li><p>判断请求有没有被取消，如果被取消，则重新获取请求。</p>
+</li>
+<li><p>调用Network对象将请求发送到网络中，并返回一个 NetworkResponse对象。</p>
+</li>
+<li><p>调用请求的pareseNetworkResonse方法，将NetworkResponse对象解析成相对应的Response对象。</p>
+</li>
+<li><p>判断请求是否需要缓存，如果需要缓存，则将其Response中cacheEntry对象放到缓存mCache中。</p>
+</li>
+<li><p>调用mDelivery将Response对象传到主线程中。</p>
+</li>
+</ol>
+<h2 id="其他源码"><strong>其他源码</strong></h2><hr>
+<p>当然这里只说了一部分，我感觉是比较核心的一部分源码。还有网络细节处理(Network及其子类)、缓存处理(Cache及其子类)、ImageLoader(方便Imageview加载图片)、NetworkImageView(网络图片控件)等等都没讲，有兴趣可以自己看看，理解了上面这些源码，再看整个Volley源码，我相信应该是不会吃力的。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Volley/" rel="tag">#Volley</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/09/24/GoogleVolley_1/" rel="next" title="Google官方网络开源库Volley的分析和使用（一、框架分析篇）">
+                <i class="fa fa-chevron-left"></i> Google官方网络开源库Volley的分析和使用（一、框架分析篇）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/09/24/GoogleVolley_3/" rel="prev" title="Google官方网络开源库Volley的分析和使用（三、扩展使用篇）">
+                Google官方网络开源库Volley的分析和使用（三、扩展使用篇） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2014/09/24/GoogleVolley_2/"
+           data-title="Google官方网络开源库Volley的分析和使用（二、源码分析篇）" data-url="http://lzyickobe.github.io/2014/09/24/GoogleVolley_2/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Volley管家-Volley-java"><span class="nav-number">1.</span> <span class="nav-text">Volley管家-Volley.java</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、应该保存多少个RequestQueue对象"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">一、应该保存多少个RequestQueue对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、下面来解释一下Volley-java的代码"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">二、下面来解释一下Volley.java的代码</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求队列类-RequestQueue-java"><span class="nav-number">2.</span> <span class="nav-text">请求队列类-RequestQueue.java</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、内部变量"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">一、内部变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、构造函数"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">二、构造函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三、启动线程"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">三、启动线程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#四、添加请求"><span class="nav-number">2.0.0.4.</span> <span class="nav-text">四、添加请求</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求类-Request-java"><span class="nav-number">3.</span> <span class="nav-text">请求类-Request.java</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、Request是一个抽象类"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">一、Request是一个抽象类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、Request的抽象方法"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">二、Request的抽象方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#三、post请求的注意事项"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">三、post请求的注意事项</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存调度线程-CacheDispatcher-java"><span class="nav-number">4.</span> <span class="nav-text">缓存调度线程-CacheDispatcher.java</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#一、加入缓存调度队列"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">一、加入缓存调度队列</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#二、缓存调度线程的run()方法"><span class="nav-number">4.0.0.2.</span> <span class="nav-text">二、缓存调度线程的run()方法</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络调度线程-NetworkDispatcher-java"><span class="nav-number">5.</span> <span class="nav-text">网络调度线程-NetworkDispatcher.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他源码"><span class="nav-number">6.</span> <span class="nav-text">其他源码</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

@@ -1,0 +1,781 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android性能优化、过度绘制," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="过度绘制描述的是屏幕上一个像素在单个帧中被重绘了多少次。比如一个有背景的TextView，那么显示文本的那些像素至少绘制了两次，一次是背景，一次是文本。过度绘制是Android平台上一个很棘手的性能问题，它非常容易出现，幸运的是，它也同样容易被修复。我们可以通过手机设置里面的开发者选项，打开Show GPU Overdraw的选项，来查看某个app过度绘制的情况。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译]Android性能优化课程（二）：过度绘制">
+<meta property="og:url" content="http://lzyickobe.github.io/2015/01/19/Performance_2/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="过度绘制描述的是屏幕上一个像素在单个帧中被重绘了多少次。比如一个有背景的TextView，那么显示文本的那些像素至少绘制了两次，一次是背景，一次是文本。过度绘制是Android平台上一个很棘手的性能问题，它非常容易出现，幸运的是，它也同样容易被修复。我们可以通过手机设置里面的开发者选项，打开Show GPU Overdraw的选项，来查看某个app过度绘制的情况。">
+<meta property="og:updated_time" content="2015-10-29T08:25:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[译]Android性能优化课程（二）：过度绘制">
+<meta name="twitter:description" content="过度绘制描述的是屏幕上一个像素在单个帧中被重绘了多少次。比如一个有背景的TextView，那么显示文本的那些像素至少绘制了两次，一次是背景，一次是文本。过度绘制是Android平台上一个很棘手的性能问题，它非常容易出现，幸运的是，它也同样容易被修复。我们可以通过手机设置里面的开发者选项，打开Show GPU Overdraw的选项，来查看某个app过度绘制的情况。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> [译]Android性能优化课程（二）：过度绘制 | lzy's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                [译]Android性能优化课程（二）：过度绘制
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-01-19T10:00:00+08:00" content="Jan 19 2015">
+              Jan 19 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android性能优化/" itemprop="url" rel="index">
+                    <span itemprop="name">Android性能优化</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/01/19/Performance_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/19/Performance_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>过度绘制描述的是屏幕上一个像素在单个帧中被重绘了多少次。比如一个有背景的TextView，那么显示文本的那些像素至少绘制了两次，一次是背景，一次是文本。过度绘制是Android平台上一个很棘手的性能问题，它非常容易出现，幸运的是，它也同样容易被修复。我们可以通过手机设置里面的开发者选项，打开Show GPU Overdraw的选项，来查看某个app过度绘制的情况。<br><a id="more"></a></p>
+<h2 id="内容概要"><strong>内容概要</strong></h2><p>这篇文章大部分内容翻译自Google的官方视频教程，<a href="http://v.youku.com/v_show/id_XODY3NjY5NTg0.html?f=23330780" target="_blank" rel="external">优酷地址</a>。除了翻译视频内容外，本篇文章还增加了一部分内容：在项目中如何减少程序的过度绘制。</p>
+<p>在视频中，Colt McAnlis会告诉我们什么是过度绘制，如何检测过度绘制，以及一个简单的减少过度绘制的方法。</p>
+<p>另外一部分，我会具体谈谈有哪些方法可以真正减少app的过度绘制。当然，实际情况还得看你的app是如何设计编写的，这里只是提供一些通用的方法和建议，并不作为设计app和程序编写的准则。</p>
+<h2 id="视频翻译"><strong>视频翻译</strong></h2><ul>
+<li><strong>过度绘制的概念</strong></li>
+</ul>
+<p>如果你粉刷过一个房间或一所房子，就会知道给墙壁涂上颜色需要做大量的工作。假如你还要重新粉刷一次的话，第二次粉刷的颜色会覆盖住第一次的颜色，第一次的颜色就永远不可见了，等于你第一次粉刷做的大量工作就完全被浪费掉。这太可怕了。</p>
+<p>同样的道理，如果在你的应用程序中浪费精力去绘制一些东西同样会产生性能问题。过度绘制这个名词就是用来描述屏幕上一个像素在单个帧中被重绘了多少次。</p>
+<ul>
+<li><strong>过度绘制分析</strong></li>
+</ul>
+<p>过度绘制其实是一个性能和设计的交叉点。我们在设计上追求很华丽的视觉效果，但一般来说这种视觉效果会采用非常多的层叠组件来实现，这时候就会带来过度绘制的问题。比如：我们有一叠UI组件，这些组件从上到下分布，上面的组件是可以被用户看见的，而在下面的组件是不可见的，但是我们依然要花很多时间去绘制那些不可见的组件，因为在某些时候，它也可能会显示出来。但这确实是在浪费CPU和GPU的资源啊。</p>
+<ul>
+<li><strong>检测过度绘制</strong></li>
+</ul>
+<p>当然，为了让应用程序得到最大的性能发挥，我们必须把过度绘制减到最少。幸运的是，我们可以通过一个简单的方法检测出过度绘制：在手机设置中的开发者选项里，打开Show GPU Overdraw的选项，就可以检测某个app界面上过度绘制的情况。</p>
+<p>打开这个选项后，你的手机会出现一些奇怪的颜色，请不要惊慌，这是正常的。系统正在你的屏幕上通过给像素绘制不同的颜色来<br>显示这个像素被过度绘制的次数。一共有四种颜色：蓝色、绿色、淡红、深红。根据过度绘制的次数，依次递增。1x过度绘制是蓝色、2x是绿色、3x是淡红、4x是深红。</p>
+<ul>
+<li><strong>目标和一个简单的方法</strong></li>
+</ul>
+<p>你的目标就是尽可能的减少过度绘制，使得你在屏幕更多的看到的是蓝色而不是深红色。</p>
+<p>过度绘制也许是因为你的UI布局中存在大量重叠的view，但一个更为普遍的情况是因为那些不必要的重叠着的背景。例如某个Activity有一个背景，Layout也有自己的背景，同时它的子View又分别有自己的背景。仅仅是通过移除不需要的背景图片，就可以使你的应用程序从一大群那种愤怒的红色变成一片像大海一样平静的蓝色。</p>
+<ul>
+<li><strong>保持冷静，keep going</strong></li>
+</ul>
+<p>虽然过度绘制很容易出现，但也比较容易消灭。这就是为什么你需要我们Android性能课程中的<a href="http://i.youku.com/u/UMjczOTc0NDkzNg==/playlists" target="_blank" rel="external">其他资源</a>，不要忘记加入Google+社区哦(继续推销Google+中)。分析代码时请保持冷静，千万要记住，性能很重要。(万年不变的一句结尾)</p>
+<h2 id="总结和建议"><strong>总结和建议</strong></h2><ul>
+<li><strong>过度绘制产生的原因</strong></li>
+</ul>
+<ol>
+<li><p>太多重叠的背景<br>重叠着的背景有时候是有必要的，有时候是没必要的。这要视你的项目具体情况而定.</p>
+</li>
+<li><p>太多叠加的View<br>或者本来这个UI布局就很复杂或者你是为了追求一个炫丽的视觉效果，这都有可能使得很多view叠加在一起。这个情况非常普遍，下面的建议中会谈谈怎么减少这种情况带来的影响。</p>
+</li>
+<li><p>复杂的Layout层级<br>复杂的层级关系，这个在布局中也很常见，下面也会说这种情况怎么做可以尽可能的减少过度绘制。</p>
+</li>
+</ol>
+<ul>
+<li><strong>建议</strong></li>
+</ul>
+<ol>
+<li><p>太多重叠的背景<br>这个问题其实最容易解决，建议就是检查你在布局和代码中设置的背景，有些背景是被隐藏在底下的，它永远不可能显示出来，这种没必要的背景一定要移除，因为它很可能会严重影响到app的性能。如果采用的是selector的背景，将normal状态的color设置为”@android:color/transparent”,也同样可以解决问题。</p>
+</li>
+<li><p>太多重叠的view<br>第一个建议是：使用ViewStub来加载一些不常用的布局，它是一个轻量级且默认不可见的视图，可以动态的加载一个布局，只有你用到这个重叠着的view的时候才加载，推迟加载的时间。第二个建议是：如果使用了类似viewpager+Fragment这样的组合或者有多个Fragment在一个界面上，需要控制Fragment的显示和隐藏，尽量使用动态地Inflation view，它的性能要比SetVisiblity好。</p>
+</li>
+<li><p>复杂的Layout层级<br>这里的建议比较多一些，首先推荐用Android提供的布局工具Hierarchy Viewer来检查和优化布局。第一个建议是：如果嵌套的线性布局加深了布局层次，可以使用相对布局来取代。第二个建议是：用<merge>标签来合并布局，这可以减少布局层次。第三个建议是：用<include>标签来重用布局，抽取通用的布局可以让布局的逻辑更清晰明了。记住，这些建议的最终目的都是使得你的Layout在Hierarchy Viewer里变得宽而浅，而不是窄而深。</include></merge></p>
+</li>
+</ol>
+<h2 id="实战推荐"><strong>实战推荐</strong></h2><p>这篇文章基本上都是理论上的分析，所以这里推荐一篇实战分析的文章，来自于高建武，一个有理想的程序员。文章地址：<a href="http://www.androidperformance.com/android-performance-optimization-overdraw-2.html" target="_blank" rel="external">http://www.androidperformance.com/android-performance-optimization-overdraw-2.html</a></p>
+<p>最后说明一点，由于这篇文章大部分内容还是来自于google的视频，所以标题还是写成翻译的文章。</p>
+<h2 id="引用"><strong>引用</strong></h2><ol>
+<li><p><a href="http://v.youku.com/v_show/id_XODY3NjY5NTg0.html?f=23330780" target="_blank" rel="external">Google官方Youtube视频教程(Android Performance Patterns- Understanding Overdraw )</a></p>
+</li>
+<li><p><a href="http://www.androidperformance.com/android-performance-optimization-overdraw-1.html" target="_blank" rel="external">高建武：Android性能优化之过渡绘制（一）</a></p>
+</li>
+<li><p><a href="http://www.androidperformance.com/android-performance-optimization-overdraw-2.html" target="_blank" rel="external">高建武：Android性能优化之过渡绘制（二）</a></p>
+</li>
+</ol>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android性能优化、过度绘制/" rel="tag">#Android性能优化、过度绘制</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/01/13/Performance_1/" rel="next" title="[译]Android性能优化课程（一）：渲染性能">
+                <i class="fa fa-chevron-left"></i> [译]Android性能优化课程（一）：渲染性能
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/01/20/AndroidAntPackage/" rel="prev" title="Android多渠道打包工具(完美支持中文属性)">
+                Android多渠道打包工具(完美支持中文属性) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/01/19/Performance_2/"
+           data-title="[译]Android性能优化课程（二）：过度绘制" data-url="http://lzyickobe.github.io/2015/01/19/Performance_2/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#内容概要"><span class="nav-number">1.</span> <span class="nav-text">内容概要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#视频翻译"><span class="nav-number">2.</span> <span class="nav-text">视频翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结和建议"><span class="nav-number">3.</span> <span class="nav-text">总结和建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实战推荐"><span class="nav-number">4.</span> <span class="nav-text">实战推荐</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用"><span class="nav-number">5.</span> <span class="nav-text">引用</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

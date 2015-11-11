@@ -1,388 +1,1209 @@
-
- <!DOCTYPE HTML>
-<html lang="zh-CN">
+<!doctype html>
+<html class="theme-next   use-motion ">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
   
-    <title>lzy&#39;s blog</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    
-    <meta name="author" content="刘智勇">
-    
-    
-    
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="lzyickobe" />
-    <meta name="twitter:title" content="lzy&#39;s blog" />
-      
-    
-    
-    
-    <link rel="icon" href="/img/favicon.ico">
-    
-    
-    <link rel="apple-touch-icon" href="/img/jacman.jpg">
-    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
-    
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, Liuzhiyong" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="一个开发者的博客">
+<meta property="og:type" content="website">
+<meta property="og:title" content="lzy's blog">
+<meta property="og:url" content="http://lzyickobe.github.io/page/2/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="一个开发者的博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lzy's blog">
+<meta name="twitter:description" content="一个开发者的博客">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> lzy's blog </title>
 </head>
 
-  <body>
-    <header>
-      <div>
-		
-			<!--
-			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="lzy&#39;s blog" title="lzy&#39;s blog"/></a>
-			</div>
-			-->
-			
-			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="lzy&#39;s blog">lzy&#39;s blog</a></h1>
-				<h2 class="blog-motto">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</h2>
-			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
-			</a></div>
-			<nav class="animated">
-				<ul>
-					<ul>
-					 
-						<li><a href="/">首页</a></li>
-					
-						<li><a href="/archives">归档</a></li>
-					
-						<li><a href="/messages">留言板</a></li>
-					
-						<li><a href="/about">关于我</a></li>
-					
-					<li>
-					
-					</li>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-				</ul>
-			</nav>			
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column 
+   page-home 
+">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
 </div>
-    </header>
-    <div id="container">
-      <div id="main">
 
-  <section class="post" itemscope itemprop="blogPost">
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
   
-    <a href="/2014/10/21/╦ц╩╓╝╟┬╝▒р│╠╡──╟╨й┐╙ги╢■гй/" title="随手记录编程的那些坑（二）:Android应用编程中的小坑" itemprop="url">
+
   
-    <h1 itemprop="name">随手记录编程的那些坑（二）:Android应用编程中的小坑</h1>
-    
-     
-       <p itemprop="description" >本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化</p>
+    <ul id="menu" class="menu ">
       
-    
-    <time datetime="2014-10-21T04:07:17.000Z" itemprop="datePublished">Oct 21 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/10/16/╦ц╩╓╝╟┬╝▒р│╠╡──╟╨й┐╙ги╥╗гй/" title="随手记录编程的那些坑（一）:Java对象问题" itemprop="url">
-  
-    <h1 itemprop="name">随手记录编程的那些坑（一）:Java对象问题</h1>
-    
-     
-       <p itemprop="description" >昨天在编程的时候调试一段代码，遇到几个java对象的问题，于是记录之。本文内容分别是：1、String对象的赋值；2、java对象的传参和引用；3、adapter.notifyDataSetChanged()不更新。</p>
-      
-    
-    <time datetime="2014-10-16T02:48:42.000Z" itemprop="datePublished">Oct 16 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/09/24/Google╣┘╖╜═°┬ч┐к╘┤┐тVolley╡─╖╓╬Ў║═╩╣╙├ги╚¤бв└й╒╣╩╣╙├╞кгй/" title="Google官方网络开源库Volley的分析和使用（三、扩展使用篇）" itemprop="url">
-  
-    <h1 itemprop="name">Google官方网络开源库Volley的分析和使用（三、扩展使用篇）</h1>
-    
-     
-       <p itemprop="description" >本文模仿StringRequest，写出满足自己需求的Request类。内容有：GsonRequest、XmlRequest以及ImageLoader的使用。</p>
-      
-    
-    <time datetime="2014-09-24T08:19:58.000Z" itemprop="datePublished">Sep 24 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/09/24/Google╣┘╖╜═°┬ч┐к╘┤┐тVolley╡─╖╓╬Ў║═╩╣╙├ги╢■бв╘┤┬ы╖╓╬Ў╞кгй/" title="Google官方网络开源库Volley的分析和使用（二、源码分析篇）" itemprop="url">
-  
-    <h1 itemprop="name">Google官方网络开源库Volley的分析和使用（二、源码分析篇）</h1>
-    
-     
-       <p itemprop="description" >这两天把Volley的源码过了一遍，在这里分享一下对部分Volley源码的理解。本文主要分析了Volley.java、RequestQueue.java、Request.java、CacheDispatcher.java、NetworkDispatcher.java。</p>
-      
-    
-    <time datetime="2014-09-24T08:02:07.000Z" itemprop="datePublished">Sep 24 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/09/24/Google╣┘╖╜═°┬ч┐к╘┤┐тVolley╡─╖╓╬Ў║═╩╣╙├ги╥╗бв┐Є╝▄╖╓╬Ў╞кгй/" title="Google官方网络开源库Volley的分析和使用（一、框架分析篇）" itemprop="url">
-  
-    <h1 itemprop="name">Google官方网络开源库Volley的分析和使用（一、框架分析篇）</h1>
-    
-     
-       <p itemprop="description" >本文主要介绍一下Volley有哪些功能和特性，我们该如何使用它，以及对框架的一些分析。</p>
-      
-    
-    <time datetime="2014-09-24T07:30:21.000Z" itemprop="datePublished">Sep 24 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/09/18/HttpClient║═HttpURLConnection╡─╩╣╙├║═╟°▒Ё-╧┬/" title="HttpClient和HttpURLConnection的使用和区别（下）" itemprop="url">
-  
-    <h1 itemprop="name">HttpClient和HttpURLConnection的使用和区别（下）</h1>
-    
-     
-       <p itemprop="description" >接着上一篇，我们继续来分析HttpURLConnection的使用，以及两者的共同点和区别。</p>
-      
-    
-    <time datetime="2014-09-18T04:01:36.000Z" itemprop="datePublished">Sep 18 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/09/12/HttpClient║═HttpURLConnection╡─╩╣╙├║═╟°▒Ё-╔╧/" title="HttpClient和HttpURLConnection的使用和区别（上）" itemprop="url">
-  
-    <h1 itemprop="name">HttpClient和HttpURLConnection的使用和区别（上）</h1>
-    
-     
-       <p itemprop="description" >相信很多Android开发者碰到涉及到Http协议的需求时，都和我一样在犹豫是使用HttpClient还是使用HttpURLConnection呢。接下来分析一下这两个网络开源库，分别从背景、用法、相同点、区别这几点来入手。</p>
-      
-    
-    <time datetime="2014-09-12T09:09:07.000Z" itemprop="datePublished">Sep 12 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/09/10/╡┌╥╗╞к-┐к═и▓й┐═/" title="第一篇 开通博客" itemprop="url">
-  
-    <h1 itemprop="name">第一篇 开通博客</h1>
-    
-     
-           <p itemprop="description" >在公司整了足足一下午，才终于把这个博客给开通了。在公司访问github又很慢，没办法，每次download一个东西都要慢慢熬。不过值得庆贺的是，我想开的技术博，终于还是开通了。以后要好好坚持写些东西，记录这一路的技术历程。撒花，鼓掌….</p>
         
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+  <section id="posts" class="posts-expand">
+
     
-    <time datetime="2014-09-10T13:18:06.000Z" itemprop="datePublished">Sep 10 2014</time>
-  </a>
-</section>
+
+    
+    
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/10/21/ken_2/" itemprop="url">
+                  随手记录编程的那些坑（二）:Android应用编程中的小坑
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-10-21T12:07:17+08:00" content="Oct 21 2014">
+              Oct 21 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/编程-踩过的那些坑/" itemprop="url" rel="index">
+                    <span itemprop="name">编程-踩过的那些坑</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/10/21/ken_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/10/21/ken_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
 
 
-  <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>本文的内容是：1、重叠控件的事件响应；2、Java和unix时间戳；3、MediaPlayer的create()和prepare()；4、listview复用item注意事项；5、代码中动态设置字体颜色；6、Android动画位移后控件的位置变化<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/10/21/ken_2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/10/16/ken_1/" itemprop="url">
+                  随手记录编程的那些坑（一）:Java对象问题
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-10-16T10:48:42+08:00" content="Oct 16 2014">
+              Oct 16 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/编程-踩过的那些坑/" itemprop="url" rel="index">
+                    <span itemprop="name">编程-踩过的那些坑</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/10/16/ken_1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/10/16/ken_1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>昨天在编程的时候调试一段代码，遇到几个java对象的问题，于是记录之。本文内容分别是：1、String对象的赋值；2、java对象的传参和引用；3、adapter.notifyDataSetChanged()不更新。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/10/16/ken_1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/09/24/GoogleVolley_3/" itemprop="url">
+                  Google官方网络开源库Volley的分析和使用（三、扩展使用篇）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-24T16:19:58+08:00" content="Sep 24 2014">
+              Sep 24 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/24/GoogleVolley_3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/24/GoogleVolley_3/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>本文模仿StringRequest，写出满足自己需求的Request类。内容有：GsonRequest、XmlRequest以及ImageLoader的使用。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/09/24/GoogleVolley_3/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/09/24/GoogleVolley_2/" itemprop="url">
+                  Google官方网络开源库Volley的分析和使用（二、源码分析篇）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-24T16:02:07+08:00" content="Sep 24 2014">
+              Sep 24 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/24/GoogleVolley_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/24/GoogleVolley_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>这两天把Volley的源码过了一遍，在这里分享一下对部分Volley源码的理解。本文主要分析了Volley.java、RequestQueue.java、Request.java、CacheDispatcher.java、NetworkDispatcher.java。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/09/24/GoogleVolley_2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/09/24/GoogleVolley_1/" itemprop="url">
+                  Google官方网络开源库Volley的分析和使用（一、框架分析篇）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-24T15:30:21+08:00" content="Sep 24 2014">
+              Sep 24 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/24/GoogleVolley_1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/24/GoogleVolley_1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>本文主要介绍一下Volley有哪些功能和特性，我们该如何使用它，以及对框架的一些分析。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/09/24/GoogleVolley_1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/09/18/HttpClient&UrlConnection_2/" itemprop="url">
+                  HttpClient和HttpURLConnection的使用和区别（下）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-18T12:01:36+08:00" content="Sep 18 2014">
+              Sep 18 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/18/HttpClient&UrlConnection_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/18/HttpClient&UrlConnection_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>接着上一篇，我们继续来分析HttpURLConnection的使用，以及两者的共同点和区别。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/09/18/HttpClient&UrlConnection_2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/09/12/HttpClient&UrlConnection_1/" itemprop="url">
+                  HttpClient和HttpURLConnection的使用和区别（上）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-12T17:09:07+08:00" content="Sep 12 2014">
+              Sep 12 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/12/HttpClient&UrlConnection_1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/12/HttpClient&UrlConnection_1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>相信很多Android开发者碰到涉及到Http协议的需求时，都和我一样在犹豫是使用HttpClient还是使用HttpURLConnection呢。接下来分析一下这两个网络开源库，分别从背景、用法、相同点、区别这几点来入手。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/09/12/HttpClient&UrlConnection_1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/09/10/start_blog/" itemprop="url">
+                  第一篇 开通博客
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-10T21:18:06+08:00" content="Sep 10 2014">
+              Sep 10 2014
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/10/start_blog/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/10/start_blog/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <span itemprop="articleBody">
+            
+              <p>在公司整了足足一下午，才终于把这个博客给开通了。<br>在公司访问github又很慢，没办法，每次download一个东西都要慢慢熬。<br>不过值得庆贺的是，我想开的技术博，终于还是开通了。<br>以后要好好坚持写些东西，记录这一路的技术历程。<br>撒花，鼓掌….</p>
+
+            
+          </span>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+
+  </section>
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
   </nav>
 
-</div>
-      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
-
-<div id="asidepart">
-<div id="authorInfo">
-	
-		<div class="author-logo"></div>		
-	
-	
-	<section class="author-info">
-		
-			<p> Hello ,I&#39;m Liuzhiyong.</p>
-		
-		
-			<p>	This is my blog in github page.</p>
-		
-	</section>
-	 
-</div>
-<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
-<aside class="clearfix">
-
-  
-<div class="categorieslist">
-	<p class="asidetitle">分类</p>
-		<ul>
-		
-			<li><a href="/categories/Android开源库-网络/" title="Android开源库-网络">Android开源库-网络<sup>9</sup></a></li>
-		
-			<li><a href="/categories/Android性能优化/" title="Android性能优化">Android性能优化<sup>2</sup></a></li>
-		
-			<li><a href="/categories/Android高级编程之路/" title="Android高级编程之路">Android高级编程之路<sup>4</sup></a></li>
-		
-			<li><a href="/categories/编程-踩过的那些坑/" title="编程-踩过的那些坑">编程-踩过的那些坑<sup>2</sup></a></li>
-		
-		</ul>
-</div>
 
 
-  <div class="linkslist">
-  <p class="asidetitle">友情链接</p>
-    <ul>
-      <li><a href="http://defshine.github.io/archives.html" target="_blank" title="defshine">defshine's Blog</a></li>
-      <li><a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea's Blog</a></li>
-      <li><a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家's Blog</a></li>
-      <li><a href="http://stormzhang.github.io/" target="_blank" title="storm">Storm's Blog</a></li>
-      <li><a href="http://hymanwang.github.io/" target="_blank" title="Hyman">Hyman's Blog</a></li>
-      <li><a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖CSDN">郭霖's Blog</a></li>
-      <li><a href="http://blog.csdn.net/xyz_lmn/" target="_blank" title="张兴业CSDN">张兴业's Blog</a></li>
-      <li><a href="http://hukai.me/" target="_blank" title="hukai">胡凯's Blog</a></li>
-      <li><a href="http://wuchong.me" target="_blank" title="WuChong">Jark's Blog</a></li>
-      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
-    </ul>
-</div>
+        </div>
 
-  
-  <div class="widget-wrap">
-  <p class="asidetitle">最近发表</p>
-    <div class="widget">
-      <ul>
         
-          <li>
-            <a href="/2015/11/10/AndroidAIDL/">Android IPC - AIDL 学习总结</a>
-          </li>
+
+
         
-      </ul>
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
     </div>
   </div>
 
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
 
-  <div class="weiboshow">
-  <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1792237047&verifier=28da7c8b&dpc=1"></iframe>
+      
 
+      
 
-</aside>
-</div>
-    </div>
-    <footer><div id="footer" >
-	<!--
-	
-	<div class="line">
-		<span></span>
-		<div class="author"></div>
-	</div>
-	
-	
-	<section class="info">
-		<p> Hello ,I&#39;m Liuzhiyong. <br/>
-			This is my blog in github page.</p>
-	</section>
-	 
-	-->
-	<div class="social-font" class="clearfix">
-		
-		<a href="http://weibo.com/1792237047" target="_blank" class="icon-weibo" title="weibo"></a>
-		
-		
-		<a href="https://github.com/lzyickobe" target="_blank" class="icon-github" title="github"></a>
-		
-		
-		<a href="http://stackoverflow.com/users/4127783" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
-		
-		
-		<a href="https://twitter.com/lzyickobe" target="_blank" class="icon-twitter" title="twitter"></a>
-		
-		
-		<a href="https://www.facebook.com/lzyickobe" target="_blank" class="icon-facebook" title="facebook"></a>
-		
-		
-		
-		
-		<a href="mailto:lzyickobe@163.com" target="_blank" class="icon-email" title="Email Me"></a>
-		
-	</div>
-		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2015 
-		
-		<a href="http://lzyickobe.github.io/about" target="_blank" title="刘智勇">刘智勇</a>
-		
-		</p>
-		<p>
-		<a href="https://www.upyun.com/" target="_blank"><img src="http://upfiles.b0.upaiyun.com/logo/120x60.png" alt="UPYUN"></a>
-		</p>
-</div>
-</footer>
-    <script src="/js/jquery-2.0.3.min.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){ 
-  $('.navbar').click(function(){
-    $('header nav').toggleClass('shownav');
-  });
-  var myWidth = 0;
-  function getSize(){
-    if( typeof( window.innerWidth ) == 'number' ) {
-      myWidth = window.innerWidth;
-    } else if( document.documentElement && document.documentElement.clientWidth) {
-      myWidth = document.documentElement.clientWidth;
-    };
-  };
-  var m = $('#main'),
-      a = $('#asidepart'),
-      c = $('.closeaside'),
-      o = $('.openaside');
-  $(window).resize(function(){
-    getSize(); 
-    if (myWidth >= 1024) {
-      $('header nav').removeClass('shownav');
-    }else
-    {
-      m.removeClass('moveMain');
-      a.css('display', 'block').removeClass('fadeOut');
-      o.css('display', 'none');
+      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
         
-    }
-  });
-  c.click(function(){
-    a.addClass('fadeOut').css('display', 'none');
-    o.css('display', 'block').addClass('fadeIn');
-    m.addClass('moveMain');
-  });
-  o.click(function(){
-    o.css('display', 'none').removeClass('beforeFadeIn');
-    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
-    m.removeClass('moveMain');
-  });
-  $(window).scroll(function(){
-    o.css("top",Math.max(80,260-$(this).scrollTop()));
-  });
-});
-</script>
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+
+    </div>
+  </aside>
 
 
+      
+    </main>
 
-
-
-
-
-
-
-
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-ga('create', 'UA-55079140-1', 'auto');  
-ga('send', 'pageview');
-</script>
-
-
-
-
-<div id="totop">
-<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
 </div>
 
-<script src="/js/totop.js"></script>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
 
 
 
+      </div>
+    </footer>
 
-  </body>
- </html>
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

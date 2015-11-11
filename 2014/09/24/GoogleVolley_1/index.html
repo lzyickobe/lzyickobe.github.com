@@ -1,0 +1,791 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Volley," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="本文主要介绍一下Volley有哪些功能和特性，我们该如何使用它，以及对框架的一些分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google官方网络开源库Volley的分析和使用（一、框架分析篇）">
+<meta property="og:url" content="http://lzyickobe.github.io/2014/09/24/GoogleVolley_1/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="本文主要介绍一下Volley有哪些功能和特性，我们该如何使用它，以及对框架的一些分析。">
+<meta property="og:image" content="http://lzyblog.b0.upaiyun.com/volley1.png">
+<meta property="og:image" content="http://lzyblog.b0.upaiyun.com/volley2.png">
+<meta property="og:updated_time" content="2015-11-11T07:01:08.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google官方网络开源库Volley的分析和使用（一、框架分析篇）">
+<meta name="twitter:description" content="本文主要介绍一下Volley有哪些功能和特性，我们该如何使用它，以及对框架的一些分析。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> Google官方网络开源库Volley的分析和使用（一、框架分析篇） | lzy's blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Google官方网络开源库Volley的分析和使用（一、框架分析篇）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-09-24T15:30:21+08:00" content="Sep 24 2014">
+              Sep 24 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/09/24/GoogleVolley_1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/09/24/GoogleVolley_1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>本文主要介绍一下Volley有哪些功能和特性，我们该如何使用它，以及对框架的一些分析。<br><a id="more"></a></p>
+<h2 id="背景"><strong>背景</strong></h2><hr>
+<ul>
+<li><p>在之前的博文上提到，Android系统中主要提供了两种方式来进行HTTP通信：HttpURLConnection和HttpClient，相信在所有包含HTTP通信的项目中，我们都能看到这两个类的身影，使用率非常高。但是这两个类的使用有点复杂，不进行封装的话，项目中会出现不少重复代码。于是，各种Android网络通信框架就出现了，例如之后的博文要介绍的android-async-http、Universal-Image-Loader、Retrofit，还有很多。他们几乎都是封装HttpURLConnection和HttpClient的一些通信操作，让开发者不用关心通信细节、线程开启关闭、图片资源回收等琐碎问题，从而达到简化HTTP通信流程的目的。</p>
+</li>
+<li><p>Android官方团队也注意到这个问题，于是在Google I/O 2013上，Android开发团队发布了Volley。Volley是Android平台上的网络通信库，能使网络通信更快，更简单，更健壮。</p>
+</li>
+<li><p>Volley既可以简单地进行HTTP通信，也可以像Universal-Image-Loader一样轻松加载网络上的图片，还在性能方面进行了大幅度的调整。它的设计就特别适合数据量不大但是通信频繁的场景。它的局限性是对于大数据量的网络操作，比如说上传、下载大文件等，Volley就会表现的非常糟糕。</p>
+</li>
+</ul>
+<h2 id="功能简介"><strong>功能简介</strong></h2><hr>
+<ol>
+<li><p><strong>简单易用的各种网络请求</strong></p>
+<p> Volley自带StringRequest、ImageRequest、JsonObjectRequest、JsonArrayRequest这几种数据的网络请求，当然这些满足不了你的话，完全可以自己扩展Request，也非常方便。</p>
+</li>
+<li><p><strong>网络请求的优先级处理</strong></p>
+<p> Volley对于请求有一套优先级的处理方式，请求可以设置优先级，然后加入请求队列。请求队列首先判断请求的优先级，然后再根据FIFO的原则来处理请求。这个设计就非常适合通信频繁的场景。</p>
+</li>
+<li><p><strong>更好用的图片异步下载</strong></p>
+<p> 想想以前在listview的getView方法中，加载一个网络图片多么麻烦，要给view设置tag防止错位，加各种回调处理返回的图片数据，查看是否滚过了当前位置，还要判断是否重复去请求数据，浪费了网络资源等等。Volley提供了ImageLoader和NetworkImageView使得在列表中加载网络图片变得非常方便，而且高效，甚至连图片的压缩都可以帮你完成。</p>
+</li>
+<li><p><strong>缓存处理</strong></p>
+<p> 是不是同一个url每次都有必要重新做网络请求呢，怎么保存这些网络数据，返回的网络数据过期了怎么办。这些问题就是缓存要关心的，Volley有一套比较完善的缓存处理，极大的简化了我们的操作。</p>
+</li>
+</ol>
+<h2 id="使用流程"><strong>使用流程</strong></h2><hr>
+<p>这里分别对StringRequest、ImageRequet、ImageLoader和NetworkImageView做个简单的使用流程。</p>
+<h4 id="一、StringRequest的使用"><strong>一、StringRequest的使用</strong></h4><p>1、 获得一个RequestQueue对象</p>
+<p>2、 创建一个StringRequest对象，三个参数分别是url、返回成功的回调、返回失败的回调</p>
+<p>3、 将这个stringRequest对象添加到RequestQueue</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.获得一个RequestQueue对象</span></span><br><span class="line">RequestQueue mQueue = Volley.newRequestQueue(context);</span><br><span class="line"><span class="comment">//2.创建一个StringRequest对象</span></span><br><span class="line">StringRequest stringRequest = <span class="keyword">new</span> StringRequest(<span class="string">"http://www.baidu.com"</span>,</span><br><span class="line">	<span class="keyword">new</span> Response.Listener&lt;String&gt;() &#123;</span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(String response)</span> </span>&#123;</span><br><span class="line">			Log.d(<span class="string">"TAG"</span>, response);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;, <span class="keyword">new</span> Response.ErrorListener() &#123;</span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onErrorResponse</span><span class="params">(VolleyError error)</span> </span>&#123;</span><br><span class="line">			Log.e(<span class="string">"TAG"</span>, error.getMessage(), error);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">);</span><br><span class="line"><span class="comment">//3.将这个stringRequest对象添加到RequestQueue</span></span><br><span class="line">mQueue.add(stringRequest);</span><br></pre></td></tr></table></figure>
+<h4 id="二、ImageRequest的使用"><strong>二、ImageRequest的使用</strong></h4><p>1、 获得一个RequestQueue对象</p>
+<p>2、 创建一个ImageRequest对象，参数分别是url、返回成功的回调、图片宽度、图片高度、图片质量、返回失败的回调</p>
+<p>3、 将这个imageRequest对象添加到RequestQueue</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、 获得一个RequestQueue对象</span></span><br><span class="line">RequestQueue mQueue = Volley.newRequestQueue(context);</span><br><span class="line"><span class="comment">//2、 创建一个ImageRequest对象</span></span><br><span class="line">ImageRequest imageRequest = <span class="keyword">new</span> ImageRequest(imgUrl,</span><br><span class="line">	<span class="keyword">new</span> Response.Listener&lt;Bitmap&gt;() &#123;</span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Bitmap arg0)</span> </span>&#123;</span><br><span class="line">			imageView.setImageBitmap(arg0);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;, </span><br><span class="line">	<span class="number">300</span>, </span><br><span class="line">	<span class="number">200</span>, </span><br><span class="line">	Config.ARGB_8888, </span><br><span class="line">	<span class="keyword">new</span> ErrorListener() &#123;</span><br><span class="line">		<span class="annotation">@Override</span></span><br><span class="line">		<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onErrorResponse</span><span class="params">(VolleyError arg0)</span> </span>&#123;</span><br><span class="line">		</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">);</span><br><span class="line"><span class="comment">//3、 将这个imageRequest对象添加到RequestQueue</span></span><br><span class="line">mQueue.add(imageRequest);</span><br></pre></td></tr></table></figure>
+<h4 id="三、ImageLoader的使用"><strong>三、ImageLoader的使用</strong></h4><p>1、 获得一个RequestQueue对象</p>
+<p>2、 创建一个ImageLoader对象，参数分别是RequestQueue和ImageCache，这里是个空的cache对象，真正在使用的时候，应该写一个继承ImageCache的缓存类</p>
+<p>3、 创建一个ImageListener对象，参数分别是ImageView，默认图片id，请求失败的图片id</p>
+<p>4、 调用ImageLoader的get()方法加载网络上的图片</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、 获得一个RequestQueue对象</span></span><br><span class="line">RequestQueue mQueue = Volley.newRequestQueue(context);</span><br><span class="line"><span class="comment">//2、 创建一个ImageLoader对象</span></span><br><span class="line">ImageLoader imageLoader = <span class="keyword">new</span> ImageLoader(mQueue, <span class="keyword">new</span> ImageCache() &#123;  </span><br><span class="line">	    <span class="annotation">@Override</span>  </span><br><span class="line">	    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putBitmap</span><span class="params">(String url, Bitmap bitmap)</span> </span>&#123;  </span><br><span class="line">	    &#125;</span><br><span class="line">	  </span><br><span class="line">	    <span class="annotation">@Override</span>  </span><br><span class="line">	    <span class="function"><span class="keyword">public</span> Bitmap <span class="title">getBitmap</span><span class="params">(String url)</span> </span>&#123;  </span><br><span class="line">	    	<span class="keyword">return</span> <span class="keyword">null</span>;  </span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">); </span><br><span class="line"><span class="comment">//3、 创建一个ImageListener对象，参数分别是ImageView，默认图片id，请求失败的图片id</span></span><br><span class="line">ImageListener listener = ImageLoader.getImageListener(imageView, android.R.drawable.ic_menu_rotate, android.R.drawable.ic_delete);</span><br><span class="line"><span class="comment">//4、 调用ImageLoader的get()方法加载网络上的图片</span></span><br><span class="line">mImageLoader.get(url, listener);</span><br></pre></td></tr></table></figure>
+<h4 id="四、NetworkImageView的使用"><strong>四、NetworkImageView的使用</strong></h4><p>1、 在xml中创建一个NetworkImageView的控件</p>
+<p>2、 获取这个控件的实例</p>
+<p>3、 设置控制的属性，得到图片<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、 在xml中创建一个NetworkImageView的控件</span></span><br><span class="line">&lt;com.android.volley.toolbox.NetworkImageView   </span><br><span class="line">   android:id=<span class="string">"@+id/network_image_view"</span>  </span><br><span class="line">   android:layout_width=<span class="string">"200dp"</span>  </span><br><span class="line">   android:layout_height=<span class="string">"200dp"</span>  </span><br><span class="line">   android:layout_gravity=<span class="string">"center_horizontal"</span>  </span><br><span class="line">/&gt;  </span><br><span class="line"><span class="comment">//2、 获取这个控件的实例</span></span><br><span class="line">NetworkImageView networkImageView = (NetworkImageView) findViewById(R.id.network_image_view);</span><br><span class="line"><span class="comment">//3、 设置控制的属性，得到图片</span></span><br><span class="line">networkImageView.setDefaultImageResId(R.drawable.default_image);  </span><br><span class="line">networkImageView.setErrorImageResId(R.drawable.failed_image);  </span><br><span class="line">networkImageView.setImageUrl(url,imageLoader);</span><br></pre></td></tr></table></figure></p>
+<h2 id="架构分析"><strong>架构分析</strong></h2><hr>
+<p>我在网上找到两张分析Volley架构的图，分别从这两张图来了解一下Volley的架构。</p>
+<ul>
+<li><p><strong>Volley官方架构图</strong><br><img src="http://lzyblog.b0.upaiyun.com/volley1.png" alt="Volley网络请求框架图"></p>
+<ul>
+<li><p>Volley使用了线程池来作为基础结构，主要分为主线程，cache线程和network线程。</p>
+</li>
+<li><p>主线程和cache线程都只有一个，而NetworkDispatcher线程有多个，这样来解决并行问题。其中蓝色部分代表主线程，绿色部分代表缓存线程，橙色部分代表网络线程。</p>
+</li>
+<li><p>我们在主线程中调用RequestQueue的add()方法来添加一条网络请求，先判断这条请求需不需要缓存，需要缓存的话，会先被加入到缓存队列当中，如果发现可以找到相应的缓存结果就直接读取缓存并解析，然后回调给主线程。如果在缓存中没有找到结果或者设置这条请求不需要缓存，则会将这条请求加入到网络请求队列中，然后处理发送HTTP请求，解析响应结果，写入缓存，并回调主线程。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>CSDN博客(持剑)分析Volley的架构图</strong><br><img src="http://lzyblog.b0.upaiyun.com/volley2.png" alt="Volley网络请求架构"></p>
+<p>  这个图表示的意思基本差不多，但看图更容易理解一些。</p>
+<p>  主要是四个步骤：</p>
+<ol>
+<li>请求队列：将请求添加到RequestQueue中。</li>
+<li>缓存：在Cache中查找有没有缓存这个请求要的数据，判断要不要去网络上取数据。</li>
+<li>网络：通过传进来的url 来发送请求，到网络中获取数据，然后返回一个Response，并判断是否要写到Cache中。</li>
+<li>结果回调：把结果回调给主线程，有可能是缓存，也有可能是网络取得的数据。</li>
+</ol>
+</li>
+</ul>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Volley/" rel="tag">#Volley</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/09/18/HttpClient&UrlConnection_2/" rel="next" title="HttpClient和HttpURLConnection的使用和区别（下）">
+                <i class="fa fa-chevron-left"></i> HttpClient和HttpURLConnection的使用和区别（下）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/09/24/GoogleVolley_2/" rel="prev" title="Google官方网络开源库Volley的分析和使用（二、源码分析篇）">
+                Google官方网络开源库Volley的分析和使用（二、源码分析篇） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2014/09/24/GoogleVolley_1/"
+           data-title="Google官方网络开源库Volley的分析和使用（一、框架分析篇）" data-url="http://lzyickobe.github.io/2014/09/24/GoogleVolley_1/">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#功能简介"><span class="nav-number">2.</span> <span class="nav-text">功能简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用流程"><span class="nav-number">3.</span> <span class="nav-text">使用流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一、StringRequest的使用"><span class="nav-number">3.0.1.</span> <span class="nav-text">一、StringRequest的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#二、ImageRequest的使用"><span class="nav-number">3.0.2.</span> <span class="nav-text">二、ImageRequest的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#三、ImageLoader的使用"><span class="nav-number">3.0.3.</span> <span class="nav-text">三、ImageLoader的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#四、NetworkImageView的使用"><span class="nav-number">3.0.4.</span> <span class="nav-text">四、NetworkImageView的使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#架构分析"><span class="nav-number">4.</span> <span class="nav-text">架构分析</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

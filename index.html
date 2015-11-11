@@ -1,416 +1,1436 @@
-
- <!DOCTYPE HTML>
-<html lang="zh-CN">
+<!doctype html>
+<html class="theme-next   use-motion ">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
   
-    <title>lzy&#39;s blog</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    
-    <meta name="author" content="刘智勇">
-    
-    
-    
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="lzyickobe" />
-    <meta name="twitter:title" content="lzy&#39;s blog" />
-      
-    
-    
-    
-    <link rel="icon" href="/img/favicon.ico">
-    
-    
-    <link rel="apple-touch-icon" href="/img/jacman.jpg">
-    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
-    
-    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href='//fonts.lug.ustc.edu.cn/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, Liuzhiyong" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="一个开发者的博客">
+<meta property="og:type" content="website">
+<meta property="og:title" content="lzy's blog">
+<meta property="og:url" content="http://lzyickobe.github.io/index.html">
+<meta property="og:site_name" content="lzy's blog">
+<meta property="og:description" content="一个开发者的博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="lzy's blog">
+<meta name="twitter:description" content="一个开发者的博客">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'post',
+    motion: true
+  };
+</script>
+
+  <title> lzy's blog </title>
 </head>
 
-  <body>
-    <header>
-      <div>
-		
-			<!--
-			<div id="imglogo">
-				<a href="/"><img src="/img/logo.png" alt="lzy&#39;s blog" title="lzy&#39;s blog"/></a>
-			</div>
-			-->
-			
-			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="lzy&#39;s blog">lzy&#39;s blog</a></h1>
-				<h2 class="blog-motto">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</h2>
-			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
-			</a></div>
-			<nav class="animated">
-				<ul>
-					<ul>
-					 
-						<li><a href="/">首页</a></li>
-					
-						<li><a href="/archives">归档</a></li>
-					
-						<li><a href="/messages">留言板</a></li>
-					
-						<li><a href="/about">关于我</a></li>
-					
-					<li>
-					
-					</li>
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
-				</ul>
-			</nav>			
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+  <div class="container one-column 
+   page-home 
+">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta custom-logo">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">lzy's blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">程序的世界，比你牛逼的人更比你努力 | Android | cocos2d-x</p>
 </div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu ">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
     </header>
-    <div id="container">
-      <div id="main">
 
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2015/11/10/AndroidAIDL/" title="Android IPC - AIDL 学习总结" itemprop="url">
-  
-    <h1 itemprop="name">Android IPC - AIDL 学习总结</h1>
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+  <section id="posts" class="posts-expand">
+
     
-     
-       <p itemprop="description" >前面一篇文章对Binder的机制进行了总结，但作为一个应用层开发者，其实很少能使用到Binder相关的技术。实际上Android framework为我们封装了Binder，使我们只需要轻松编写Java代码就可以进程间通信了，这个神奇的封装就是AIDL。相信有不少开发者对这个名字</p>
+
+    
+    
+
+    
       
-    
-    <time datetime="2015-11-10T08:08:09.000Z" itemprop="datePublished">Nov 10 2015</time>
-  </a>
-</section>
 
-  <section class="post" itemscope itemprop="blogPost">
   
-    <a href="/2015/11/06/AndroidBinder/" title="Android IPC - Binder 学习总结" itemprop="url">
   
-    <h1 itemprop="name">Android IPC - Binder 学习总结</h1>
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
     
-     
-       <p itemprop="description" >最近想学些Android Framework中的东西，必经之路就是Binder。Binder并不是Android最早开始使用，它发源于Be和Palm之前的OpenBinder，由Dianne Hackborn领导开发。Hackborn目前在Google工作，他是这样描述binde</p>
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/11/10/AndroidAIDL/" itemprop="url">
+                  Android IPC - AIDL 学习总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-11-10T16:08:09+08:00" content="Nov 10 2015">
+              Nov 10 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android高级编程之路/" itemprop="url" rel="index">
+                    <span itemprop="name">Android高级编程之路</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/11/10/AndroidAIDL/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/10/AndroidAIDL/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
       
-    
-    <time datetime="2015-11-06T08:33:17.000Z" itemprop="datePublished">Nov 6 2015</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2015/01/20/AndroidAntPackage/" title="Android多渠道打包工具(完美支持中文属性)" itemprop="url">
-  
-    <h1 itemprop="name">Android多渠道打包工具(完美支持中文属性)</h1>
-    
-     
-       <p itemprop="description" >这是我平常自己在用的Android多渠道打包工具，也会保持更新，现在开源出来，让大家一同改进。这个工具是在Eclipse环境下，使用Ant打包，还需要添加Python的环境变量。这个打包工具支持配置App名字、支持一次生成多个渠道包、支持自动更新版本号和手动设置版本号两种模式、支</p>
       
-    
-    <time datetime="2015-01-20T03:51:15.000Z" itemprop="datePublished">Jan 20 2015</time>
-  </a>
-</section>
 
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2015/01/19/-╥ы-Android╨╘─▄╙┼╗п┐╬│╠ги╢■гйг║╣¤╢╚╗ц╓╞/" title="[译]Android性能优化课程（二）：过度绘制" itemprop="url">
-  
-    <h1 itemprop="name">[译]Android性能优化课程（二）：过度绘制</h1>
-    
-     
-       <p itemprop="description" >过度绘制描述的是屏幕上一个像素在单个帧中被重绘了多少次。比如一个有背景的TextView，那么显示文本的那些像素至少绘制了两次，一次是背景，一次是文本。过度绘制是Android平台上一个很棘手的性能问题，它非常容易出现，幸运的是，它也同样容易被修复。我们可以通过手机设置里面的开发</p>
       
-    
-    <time datetime="2015-01-19T02:00:00.000Z" itemprop="datePublished">Jan 19 2015</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2015/01/13/-╥ы-Android╨╘─▄╙┼╗п┐╬│╠ги╥╗гйг║ф╓╚╛╨╘─▄/" title="[译]Android性能优化课程（一）：渲染性能" itemprop="url">
-  
-    <h1 itemprop="name">[译]Android性能优化课程（一）：渲染性能</h1>
-    
-     
-       <p itemprop="description" >渲染性能意味着你可以有多快的速度绘制你的activity并让它在屏幕上刷新出来。这里的性能良好指的是你的用户感觉你的应用程序是流畅的，并且是快速响应的，这意味着你必须在16ms甚至更少的时间来完成所有的逻辑和渲染操作，但实际上这可能比你想象的要困难一些。</p>
+        
+          <p><a href="http://liuzhiyong.org/2015/11/06/AndroidBinder/">前面一篇文章</a>对Binder的机制进行了总结，但作为一个应用层开发者，其实很少能使用到Binder相关的技术。实际上Android framework为我们封装了Binder，使我们只需要轻松编写Java代码就可以进程间通信了，这个神奇的封装就是AIDL。相信有不少开发者对这个名字都非常熟悉，但让他来讲一下AIDL具体机制和使用场景可能又说不清，那么我们今天就来聊一聊AIDL。</p>
+<ol>
+<li>Android IPC 为何设计AIDL</li>
+<li>AIDL的概述</li>
+<li>如何使用AIDL</li>
+<li>AIDL的机制分析
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/10/AndroidAIDL/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
       
-    
-    <time datetime="2015-01-13T10:40:00.000Z" itemprop="datePublished">Jan 13 2015</time>
-  </a>
-</section>
+    </div>
 
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2015/01/09/Android╙ж╙├╝р╠¤╫╘╝║╩╟╖ё▒╗╨╢╘╪гм╫Ў╖┤└б═│╝╞/" title="Android应用监听自己是否被卸载，做反馈统计" itemprop="url">
-  
-    <h1 itemprop="name">Android应用监听自己是否被卸载，做反馈统计</h1>
-    
-     
-       <p itemprop="description" >最近做项目的时候碰到这样一个需求：用户卸载应用后提供反馈信息以便更好的改进软件，并统计卸载量。Android可以监听卸载广播，得到什么应用被卸载了，但是系统并没有提供监听自己卸载的方法，于是乎，在网上找了一些方法，根据自己需求做了些修改，最后完成这个需求。</p>
+    <footer class="post-footer">
       
-    
-    <time datetime="2015-01-09T07:04:47.000Z" itemprop="datePublished">Jan 9 2015</time>
-  </a>
-</section>
 
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2015/01/06/Square┐к╘┤┐тOKHttp╡─╖╓╬Ў║═╩╣╙├ги╦─гй/" title="Square开源库OKHttp的分析和使用（四）" itemprop="url">
-  
-    <h1 itemprop="name">Square开源库OKHttp的分析和使用（四）</h1>
-    
-     
-       <p itemprop="description" >这篇文章主要介绍OKHttp的进阶使用，本想着继续翻译官方wiki的Recipes。后来偶然发现网上一篇博客已经翻译了这篇wiki，为了不浪费宝贵时间，我就直接转载这篇博客了，这里要感谢博主的辛苦翻译。根据GavinCT对okhttp的使用情况，这里要说明一个情况：OkHttp2</p>
       
-    
-    <time datetime="2015-01-06T08:19:55.000Z" itemprop="datePublished">Jan 6 2015</time>
-  </a>
-</section>
 
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/12/23/Square┐к╘┤┐тOKHttp╡─╖╓╬Ў║═╩╣╙├ги╚¤гй/" title="Square开源库OKHttp的分析和使用（三）" itemprop="url">
-  
-    <h1 itemprop="name">Square开源库OKHttp的分析和使用（三）</h1>
-    
-     
-       <p itemprop="description" >之前一段时间忙着结婚去了，因此博客也空了一个多月没打理，现在回来储备好了能量，要比之前更好的打理博客。OKHttp还有两篇wiki没有翻译完，废话不多说，这篇翻译的wiki是Connections。</p>
       
-    
-    <time datetime="2014-12-23T06:16:26.000Z" itemprop="datePublished">Dec 23 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/10/31/Square┐к╘┤┐тOKHttp╡─╖╓╬Ў║═╩╣╙├ги╢■гй/" title="Square开源库OKHttp的分析和使用（二）" itemprop="url">
-  
-    <h1 itemprop="name">Square开源库OKHttp的分析和使用（二）</h1>
-    
-     
-       <p itemprop="description" >前面一篇OKHttp的文章主要是翻译了一下OKHttp的介绍和使用示例，看到官网上还有wiki，就停不下来想继续翻译一下，毕竟官方写的东西才是最有价值的。限于笔者的英文比较烂，如果你的英文比较好，非常建议直接去看官网的wiki；如果你读完英文原文，还想看看这篇译文有什么翻译不对的</p>
       
-    
-    <time datetime="2014-10-31T08:32:14.000Z" itemprop="datePublished">Oct 31 2014</time>
-  </a>
-</section>
-
-  <section class="post" itemscope itemprop="blogPost">
-  
-    <a href="/2014/10/30/Square┐к╘┤┐тOkHttp╡─╖╓╬Ў║═╩╣╙├ги╥╗гй/" title="Square开源库OkHttp的分析和使用（一）" itemprop="url">
-  
-    <h1 itemprop="name">Square开源库OkHttp的分析和使用（一）</h1>
-    
-     
-       <p itemprop="description" >这篇文章介绍OKHttp，OKHttp是Square的一个开源网络库，功能很强大，这篇文章大多数内容都是翻译自官方的介绍。这里多提一点，Square绝逼是一个良心企业，开源了很多非常优秀的库，这是他们Github的地址。</p>
+        <div class="post-eof"></div>
       
+    </footer>
+  </article>
+
+
     
-    <time datetime="2014-10-30T10:16:44.000Z" itemprop="datePublished">Oct 30 2014</time>
-  </a>
-</section>
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/11/06/AndroidBinder/" itemprop="url">
+                  Android IPC - Binder 学习总结
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-11-06T16:33:17+08:00" content="Nov 6 2015">
+              Nov 6 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android高级编程之路/" itemprop="url" rel="index">
+                    <span itemprop="name">Android高级编程之路</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/11/06/AndroidBinder/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/06/AndroidBinder/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
 
 
-  <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>最近想学些Android Framework中的东西，必经之路就是Binder。Binder并不是Android最早开始使用，它发源于Be和Palm之前的OpenBinder，由Dianne Hackborn领导开发。Hackborn目前在Google工作，他是这样描述binder的：<br>In the Android platform, the binder is used for nearly everything that happens across processes in the core platform。不夸张的说，binder是整个android架构的基础。本文从Binder的基本概念和框架入手，讲述binder机制的点点滴滴。全文分为以下四部分：1、Android为何设计binder进行进程间通信。2、Binder的框架结构和概述。3、Client和Server通信过程。4、binder总结。</p>
+<p>PS，本文绝大部分内容来自网络，是我自己学习binder的一篇总结，而且本文只是binder的入门，不涉及到过多底层的描述，要想更多了解binder的内容，还请移步到引用文献中老罗和邓凡平老师的文章。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/11/06/AndroidBinder/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/01/20/AndroidAntPackage/" itemprop="url">
+                  Android多渠道打包工具(完美支持中文属性)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-01-20T11:51:15+08:00" content="Jan 20 2015">
+              Jan 20 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android高级编程之路/" itemprop="url" rel="index">
+                    <span itemprop="name">Android高级编程之路</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/01/20/AndroidAntPackage/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/20/AndroidAntPackage/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>这是我平常自己在用的Android多渠道打包工具，也会保持更新，现在开源出来，让大家一同改进。这个工具是在Eclipse环境下，使用Ant打包，还需要添加Python的环境变量。这个打包工具支持配置App名字、支持一次生成多个渠道包、支持自动更新版本号和手动设置版本号两种模式、支持添加自定义属性来控制debug、支持debug和release两种模式。源码及demo已经传到github。项目地址请<a href="https://github.com/lzyickobe/AntPackageDemo">戳这里</a>。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/01/20/AndroidAntPackage/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/01/19/Performance_2/" itemprop="url">
+                  [译]Android性能优化课程（二）：过度绘制
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-01-19T10:00:00+08:00" content="Jan 19 2015">
+              Jan 19 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android性能优化/" itemprop="url" rel="index">
+                    <span itemprop="name">Android性能优化</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/01/19/Performance_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/19/Performance_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>过度绘制描述的是屏幕上一个像素在单个帧中被重绘了多少次。比如一个有背景的TextView，那么显示文本的那些像素至少绘制了两次，一次是背景，一次是文本。过度绘制是Android平台上一个很棘手的性能问题，它非常容易出现，幸运的是，它也同样容易被修复。我们可以通过手机设置里面的开发者选项，打开Show GPU Overdraw的选项，来查看某个app过度绘制的情况。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/01/19/Performance_2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/01/13/Performance_1/" itemprop="url">
+                  [译]Android性能优化课程（一）：渲染性能
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-01-13T18:40:00+08:00" content="Jan 13 2015">
+              Jan 13 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android性能优化/" itemprop="url" rel="index">
+                    <span itemprop="name">Android性能优化</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/01/13/Performance_1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/13/Performance_1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>渲染性能意味着你可以有多快的速度绘制你的activity并让它在屏幕上刷新出来。这里的性能良好指的是你的用户感觉你的应用程序是流畅的，并且是快速响应的，这意味着你必须在16ms甚至更少的时间来完成所有的逻辑和渲染操作，但实际上这可能比你想象的要困难一些。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/01/13/Performance_1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/01/09/AndroidUninstall/" itemprop="url">
+                  Android应用监听自己是否被卸载，做反馈统计
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-01-09T15:04:47+08:00" content="Jan 9 2015">
+              Jan 9 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android高级编程之路/" itemprop="url" rel="index">
+                    <span itemprop="name">Android高级编程之路</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/01/09/AndroidUninstall/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/09/AndroidUninstall/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>最近做项目的时候碰到这样一个需求：用户卸载应用后提供反馈信息以便更好的改进软件，并统计卸载量。Android可以监听卸载广播，得到什么应用被卸载了，但是系统并没有提供监听自己卸载的方法，于是乎，在网上找了一些方法，根据自己需求做了些修改，最后完成这个需求。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/01/09/AndroidUninstall/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2015/01/06/OKHttp_4/" itemprop="url">
+                  Square开源库OKHttp的分析和使用（四）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-01-06T16:19:55+08:00" content="Jan 6 2015">
+              Jan 6 2015
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/01/06/OKHttp_4/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/01/06/OKHttp_4/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>这篇文章主要介绍OKHttp的进阶使用，本想着继续翻译官方wiki的<a href="https://github.com/square/okhttp/wiki/Recipes">Recipes</a>。后来偶然发现网上一篇博客已经翻译了这篇wiki，为了不浪费宝贵时间，我就直接转载这篇<a href="http://www.cnblogs.com/ct2011/p/3997368.html">博客</a>了，这里要感谢博主的辛苦翻译。根据GavinCT对okhttp的使用情况，这里要说明一个情况：OkHttp2.0有Bug，暂时不推荐在产品中使用。具体bug可以看<a href="http://www.cnblogs.com/ct2011/p/4078137.html">GavinCT的博客</a><br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/01/06/OKHttp_4/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/12/23/OKHttp_3/" itemprop="url">
+                  Square开源库OKHttp的分析和使用（三）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-12-23T14:16:26+08:00" content="Dec 23 2014">
+              Dec 23 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/12/23/OKHttp_3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/12/23/OKHttp_3/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>之前一段时间忙着结婚去了，因此博客也空了一个多月没打理，现在回来储备好了能量，要比之前更好的打理博客。OKHttp还有两篇wiki没有翻译完，废话不多说，这篇翻译的wiki是<a href="https://github.com/square/okhttp/wiki/Connections">Connections</a>。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/12/23/OKHttp_3/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/10/31/OKHttp_2/" itemprop="url">
+                  Square开源库OKHttp的分析和使用（二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-10-31T16:32:14+08:00" content="Oct 31 2014">
+              Oct 31 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/10/31/OKHttp_2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/10/31/OKHttp_2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>前面一篇OKHttp的文章主要是翻译了一下OKHttp的介绍和使用示例，看到官网上还有<a href="https://github.com/square/okhttp/wiki">wiki</a>，就停不下来想继续翻译一下，毕竟官方写的东西才是最有价值的。限于笔者的英文比较烂，如果你的英文比较好，非常建议直接去看官网的<a href="https://github.com/square/okhttp/wiki">wiki</a>；如果你读完英文原文，还想看看这篇译文有什么翻译不对的地方，也十分欢迎拍砖和指正。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/10/31/OKHttp_2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2014/10/30/OKHttp_1/" itemprop="url">
+                  Square开源库OkHttp的分析和使用（一）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2014-10-30T18:16:44+08:00" content="Oct 30 2014">
+              Oct 30 2014
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android开源库-网络/" itemprop="url" rel="index">
+                    <span itemprop="name">Android开源库-网络</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2014/10/30/OKHttp_1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2014/10/30/OKHttp_1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>这篇文章介绍OKHttp，OKHttp是Square的一个开源网络库，功能很强大，这篇文章大多数内容都是翻译自官方的<a href="http://square.github.io/okhttp/">介绍</a>。这里多提一点，Square绝逼是一个良心企业，开源了很多非常优秀的库，这是他们<a href="http://square.github.io/">Github的地址</a>。<br>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2014/10/30/OKHttp_1/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+
+  </section>
+
+  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
-</div>
-      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
-
-<div id="asidepart">
-<div id="authorInfo">
-	
-		<div class="author-logo"></div>		
-	
-	
-	<section class="author-info">
-		
-			<p> Hello ,I&#39;m Liuzhiyong.</p>
-		
-		
-			<p>	This is my blog in github page.</p>
-		
-	</section>
-	 
-</div>
-<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
-<aside class="clearfix">
-
-  
-<div class="categorieslist">
-	<p class="asidetitle">分类</p>
-		<ul>
-		
-			<li><a href="/categories/Android开源库-网络/" title="Android开源库-网络">Android开源库-网络<sup>9</sup></a></li>
-		
-			<li><a href="/categories/Android性能优化/" title="Android性能优化">Android性能优化<sup>2</sup></a></li>
-		
-			<li><a href="/categories/Android高级编程之路/" title="Android高级编程之路">Android高级编程之路<sup>4</sup></a></li>
-		
-			<li><a href="/categories/编程-踩过的那些坑/" title="编程-踩过的那些坑">编程-踩过的那些坑<sup>2</sup></a></li>
-		
-		</ul>
-</div>
 
 
-  <div class="linkslist">
-  <p class="asidetitle">友情链接</p>
-    <ul>
-      <li><a href="http://defshine.github.io/archives.html" target="_blank" title="defshine">defshine's Blog</a></li>
-      <li><a href="http://www.trinea.cn/" target="_blank" title="Trinea">Trinea's Blog</a></li>
-      <li><a href="http://blog.daimajia.com/" target="_blank" title="代码家">代码家's Blog</a></li>
-      <li><a href="http://stormzhang.github.io/" target="_blank" title="storm">Storm's Blog</a></li>
-      <li><a href="http://hymanwang.github.io/" target="_blank" title="Hyman">Hyman's Blog</a></li>
-      <li><a href="http://blog.csdn.net/guolin_blog" target="_blank" title="郭霖CSDN">郭霖's Blog</a></li>
-      <li><a href="http://blog.csdn.net/xyz_lmn/" target="_blank" title="张兴业CSDN">张兴业's Blog</a></li>
-      <li><a href="http://hukai.me/" target="_blank" title="hukai">胡凯's Blog</a></li>
-      <li><a href="http://wuchong.me" target="_blank" title="WuChong">Jark's Blog</a></li>
-      <li><a href="http://hexo.io" target="_blank" title="Hexo">Hexo</a></li>
-    </ul>
-</div>
+        </div>
 
-  
-  <div class="widget-wrap">
-  <p class="asidetitle">最近发表</p>
-    <div class="widget">
-      <ul>
         
-          <li>
-            <a href="/2015/11/10/AndroidAIDL/">Android IPC - AIDL 学习总结</a>
-          </li>
+
+
         
-      </ul>
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
     </div>
   </div>
 
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
 
-  <div class="weiboshow">
-  <p class="asidetitle">新浪微博</p>
-    <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=1792237047&verifier=28da7c8b&dpc=1"></iframe>
+      
 
+      
 
-</aside>
-</div>
-    </div>
-    <footer><div id="footer" >
-	<!--
-	
-	<div class="line">
-		<span></span>
-		<div class="author"></div>
-	</div>
-	
-	
-	<section class="info">
-		<p> Hello ,I&#39;m Liuzhiyong. <br/>
-			This is my blog in github page.</p>
-	</section>
-	 
-	-->
-	<div class="social-font" class="clearfix">
-		
-		<a href="http://weibo.com/1792237047" target="_blank" class="icon-weibo" title="weibo"></a>
-		
-		
-		<a href="https://github.com/lzyickobe" target="_blank" class="icon-github" title="github"></a>
-		
-		
-		<a href="http://stackoverflow.com/users/4127783" target="_blank" class="icon-stack-overflow" title="stackoverflow"></a>
-		
-		
-		<a href="https://twitter.com/lzyickobe" target="_blank" class="icon-twitter" title="twitter"></a>
-		
-		
-		<a href="https://www.facebook.com/lzyickobe" target="_blank" class="icon-facebook" title="facebook"></a>
-		
-		
-		
-		
-		<a href="mailto:lzyickobe@163.com" target="_blank" class="icon-email" title="Email Me"></a>
-		
-	</div>
-		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Pacman">Jacman</a> © 2015 
-		
-		<a href="http://lzyickobe.github.io/about" target="_blank" title="刘智勇">刘智勇</a>
-		
-		</p>
-		<p>
-		<a href="https://www.upyun.com/" target="_blank"><img src="http://upfiles.b0.upaiyun.com/logo/120x60.png" alt="UPYUN"></a>
-		</p>
-</div>
-</footer>
-    <script src="/js/jquery-2.0.3.min.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){ 
-  $('.navbar').click(function(){
-    $('header nav').toggleClass('shownav');
-  });
-  var myWidth = 0;
-  function getSize(){
-    if( typeof( window.innerWidth ) == 'number' ) {
-      myWidth = window.innerWidth;
-    } else if( document.documentElement && document.documentElement.clientWidth) {
-      myWidth = document.documentElement.clientWidth;
-    };
-  };
-  var m = $('#main'),
-      a = $('#asidepart'),
-      c = $('.closeaside'),
-      o = $('.openaside');
-  $(window).resize(function(){
-    getSize(); 
-    if (myWidth >= 1024) {
-      $('header nav').removeClass('shownav');
-    }else
-    {
-      m.removeClass('moveMain');
-      a.css('display', 'block').removeClass('fadeOut');
-      o.css('display', 'none');
+      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/images/avatar.png" alt="刘智勇" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">刘智勇</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">一个开发者的博客</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">分类</span>
+              
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">标签</span>
+              
+          </div>
+
+        </nav>
+
         
-    }
-  });
-  c.click(function(){
-    a.addClass('fadeOut').css('display', 'none');
-    o.css('display', 'block').addClass('fadeIn');
-    m.addClass('moveMain');
-  });
-  o.click(function(){
-    o.css('display', 'none').removeClass('beforeFadeIn');
-    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
-    m.removeClass('moveMain');
-  });
-  $(window).scroll(function(){
-    o.css("top",Math.max(80,260-$(this).scrollTop()));
-  });
-});
-</script>
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lzyickobe" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> github
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/p/1005051792237047/home?from=page_100505&mod=TAB#place" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+
+    </div>
+  </aside>
 
 
+      
+    </main>
 
-
-
-
-
-
-
-
-<script type="text/javascript">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-ga('create', 'UA-55079140-1', 'auto');  
-ga('send', 'pageview');
-</script>
-
-
-
-
-<div id="totop">
-<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">刘智勇</span>
 </div>
 
-<script src="/js/totop.js"></script>
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
 
 
 
+      </div>
+    </footer>
 
-  </body>
- </html>
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"lzyblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>
