@@ -58,13 +58,13 @@
 Android I">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android IPC - AIDL 学习总结">
-<meta property="og:url" content="http://lzyickobe.github.io/2015/11/10/AndroidAIDL/index.html">
+<meta property="og:url" content="http://lzyickobe.github.io/2015/11/12/AndroidAIDL/index.html">
 <meta property="og:site_name" content="lzy's blog">
 <meta property="og:description" content="前面一篇文章对Binder的机制进行了总结，但作为一个应用层开发者，其实很少能使用到Binder相关的技术。实际上Android framework为我们封装了Binder，使我们只需要轻松编写Java代码就可以进程间通信了，这个神奇的封装就是AIDL。相信有不少开发者对这个名字都非常熟悉，但让他来讲一下AIDL具体机制和使用场景可能又说不清，那么我们今天就来聊一聊AIDL。
 
 Android I">
 <meta property="og:image" content="http://img0.tuicool.com/2EB7FvF.png">
-<meta property="og:updated_time" content="2015-11-10T08:08:09.000Z">
+<meta property="og:updated_time" content="2015-11-12T02:43:38.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android IPC - AIDL 学习总结">
 <meta name="twitter:description" content="前面一篇文章对Binder的机制进行了总结，但作为一个应用层开发者，其实很少能使用到Binder相关的技术。实际上Android framework为我们封装了Binder，使我们只需要轻松编写Java代码就可以进程间通信了，这个神奇的封装就是AIDL。相信有不少开发者对这个名字都非常熟悉，但让他来讲一下AIDL具体机制和使用场景可能又说不清，那么我们今天就来聊一聊AIDL。
@@ -236,8 +236,8 @@ Android I">
         <div class="post-meta">
           <span class="post-time">
             发表于
-            <time itemprop="dateCreated" datetime="2015-11-10T16:08:09+08:00" content="Nov 10 2015">
-              Nov 10 2015
+            <time itemprop="dateCreated" datetime="2015-11-12T10:43:38+08:00" content="Nov 12 2015">
+              Nov 12 2015
             </time>
           </span>
 
@@ -262,8 +262,8 @@ Android I">
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2015/11/10/AndroidAIDL/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/10/AndroidAIDL/" itemprop="commentsCount"></span>
+                <a href="/2015/11/12/AndroidAIDL/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/11/12/AndroidAIDL/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -295,7 +295,7 @@ Android I">
 <li>Android有一个跨进程间通信的工具Messenger，那为什么还设计AIDL呢？原因是AIDL可以处理多线程、多客户端并发访问的，而Messenger只能是单线程处理。</li>
 <li>Binder可以处理多线程、多客户端并发访问的进程间通信，那为什么还设计AIDL呢？实际上AIDL就是把Binder通讯的一些细节封装了起来，使得我们在JAVA层写IPC的代码时，不用考虑write、read、transact等操作，只需要把注意力专注在自身定义的接口上即可。</li>
 </ol>
-<p>这么讲还是有点晕吧，这篇文章就带大家看看AIDL到底帮我做了哪些事情，以为我们如何更好的使用AIDL。</p>
+<p>其实Messenger、AIDL、Binder这三个东西的关系是这样的： AIDL是对Binder的封装，Messenger是对AIDL的封装，就是为了更好的方便开发者在不同场景下使用进程间通信。<br>这么讲还是有点晕吧，这篇文章就带大家看看AIDL到底帮我做了哪些事情，以为我们如何更好的使用AIDL。</p>
 <h2 id="AIDL的概述"><strong>AIDL的概述</strong></h2><h4 id="AIDL的基本概念"><strong>AIDL的基本概念</strong></h4><ul>
 <li><strong>AIDL语言</strong>: android interface definition language, Android接口描述语言，是接口描述语言中的一种。</li>
 <li><strong>封装</strong>: Android framework将Binder封装的几乎不可见了，应用开发者接触到的IPC大部分都是AIDL。</li>
@@ -426,8 +426,8 @@ Android I">
         
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2015/11/10/AndroidAIDL/"
-           data-title="Android IPC - AIDL 学习总结" data-url="http://lzyickobe.github.io/2015/11/10/AndroidAIDL/">
+      <div class="ds-thread" data-thread-key="2015/11/12/AndroidAIDL/"
+           data-title="Android IPC - AIDL 学习总结" data-url="http://lzyickobe.github.io/2015/11/12/AndroidAIDL/">
       </div>
     
   </div>
